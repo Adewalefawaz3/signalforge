@@ -26,29 +26,49 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.6);
             border: 1px solid rgba(99, 102, 241, 0.12);
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 20%, rgba(99, 102, 241, 0.02) 0%, transparent 50%);
+            pointer-events: none;
         }
         .brand {
             display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px;
+            position: relative; z-index: 1;
         }
-        .brand img { height: 32px; width: 32px; border-radius: 6px; }
+        .brand svg { height: 32px; width: 32px; }
         .brand span { font-size: 20px; font-weight: 700; background: linear-gradient(135deg, #818cf8, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .wallet-icon { font-size: 48px; margin-bottom: 8px; }
-        h1 { font-size: 22px; margin-bottom: 4px; color: #fff; }
-        .subtitle { color: #666; font-size: 14px; margin-bottom: 28px; }
+        
+        .wallet-icon { margin-bottom: 12px; position: relative; z-index: 1; }
+        .wallet-icon svg { width: 56px; height: 56px; }
+        
+        h1 { font-size: 22px; margin-bottom: 4px; color: #fff; position: relative; z-index: 1; }
+        .subtitle { color: #666; font-size: 14px; margin-bottom: 28px; position: relative; z-index: 1; }
 
         .tab-bar {
             display: flex; gap: 0; margin-bottom: 24px;
             background: #0a0a1a; border-radius: 12px; padding: 4px; border: 1px solid rgba(255,255,255,0.05);
+            position: relative; z-index: 1;
         }
         .tab {
             flex: 1; padding: 10px; border-radius: 10px; cursor: pointer;
             font-size: 14px; font-weight: 500; border: none;
             background: transparent; color: #666; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
         }
+        .tab svg { width: 16px; height: 16px; }
         .tab.active { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; }
 
-        .form-group { margin-bottom: 20px; text-align: left; }
-        .form-group label { display: block; font-size: 13px; color: #888; margin-bottom: 8px; font-weight: 500; }
+        .form-group { margin-bottom: 20px; text-align: left; position: relative; z-index: 1; }
+        .form-group label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #888; margin-bottom: 8px; font-weight: 500; }
+        .form-group label svg { width: 14px; height: 14px; }
         .form-group textarea, .form-group input {
             width: 100%; padding: 14px 16px; background: #0a0a1a;
             border: 1px solid rgba(255,255,255,0.08); border-radius: 12px;
@@ -66,81 +86,160 @@
             border: none; border-radius: 12px; color: white;
             font-size: 16px; font-weight: 600; cursor: pointer;
             transition: all 0.2s; margin-bottom: 16px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            position: relative; z-index: 1;
         }
+        .btn-primary svg { width: 18px; height: 18px; }
         .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3); }
 
         .error {
             color: #ff6b6b; font-size: 13px; display: none; margin-top: 12px;
             padding: 12px; background: rgba(255, 107, 107, 0.08);
             border-radius: 8px; border: 1px solid rgba(255, 107, 107, 0.15);
+            position: relative; z-index: 1;
         }
-        .info { font-size: 12px; color: #555; margin-top: 20px; line-height: 1.5; }
+        .info { 
+            font-size: 12px; color: #555; margin-top: 20px; line-height: 1.5; 
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            position: relative; z-index: 1;
+        }
+        .info svg { width: 14px; height: 14px; }
         .spinner {
             display: none; width: 20px; height: 20px;
             border: 2px solid rgba(255,255,255,0.2); border-top-color: white;
-            border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto;
+            border-radius: 50%; animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
         .input-wrapper { position: relative; }
         .password-toggle {
             position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
             background: none; border: none; color: #555; cursor: pointer; font-size: 16px;
+            padding: 0;
         }
+        .password-toggle svg { width: 18px; height: 18px; }
         .security-badge {
             display: inline-flex; align-items: center; gap: 6px;
             padding: 6px 14px; background: rgba(99, 102, 241, 0.08);
             border-radius: 50px; font-size: 11px; color: #818cf8; margin-bottom: 20px;
+            position: relative; z-index: 1;
         }
+        .security-badge svg { width: 12px; height: 12px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="brand">
-            <img src="images/logo.png" alt="SignalForge">
+            <!-- SignalForge Logo SVG -->
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="32" height="32" rx="8" fill="url(#sfgrad)"/>
+                <path d="M16 6L18.5 12.5L25 15L18.5 17.5L16 24L13.5 17.5L7 15L13.5 12.5L16 6Z" fill="white" opacity="0.9"/>
+                <defs>
+                    <linearGradient id="sfgrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#6366f1"/>
+                        <stop offset="1" stop-color="#8b5cf6"/>
+                    </linearGradient>
+                </defs>
+            </svg>
             <span>SignalForge</span>
         </div>
-        <div class="wallet-icon">👛</div>
+        
+        <div class="wallet-icon">
+            <!-- Premium Wallet SVG Icon -->
+            <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="4" y="12" width="48" height="34" rx="8" stroke="url(#wgrad)" stroke-width="2.5" fill="rgba(99,102,241,0.05)"/>
+                <rect x="12" y="18" width="32" height="22" rx="4" fill="rgba(99,102,241,0.1)"/>
+                <circle cx="38" cy="29" r="4" fill="url(#wgrad)"/>
+                <path d="M28 8L30 4L32 8L36 6L32 10L34 14L28 10L22 14L24 10L20 6L24 8L28 8Z" fill="url(#wgrad)" opacity="0.3"/>
+                <defs>
+                    <linearGradient id="wgrad" x1="4" y1="12" x2="52" y2="46" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#818cf8"/>
+                        <stop offset="1" stop-color="#a78bfa"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+        
         <h1>Connect Your Wallet</h1>
         <p class="subtitle">Link your Solana wallet to start paper trading with $100,000 simulated capital</p>
         
-        <div class="security-badge">🔒 Secured with 256-bit encryption</div>
+        <div class="security-badge">
+            <!-- Lock SVG -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            Secured with 256-bit encryption
+        </div>
 
         <div class="tab-bar">
-            <button class="tab active" onclick="switchTab('seed')">Recovery Phrase</button>
-            <button class="tab" onclick="switchTab('key')">Private Key</button>
+            <button class="tab active" onclick="switchTab('seed')">
+                <!-- Key SVG -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+                </svg>
+                Recovery Phrase
+            </button>
+            <button class="tab" onclick="switchTab('key')">
+                <!-- Fingerprint SVG -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a10 10 0 0 0-10 10c0 3.03.54 5.92 1.56 8.48M12 6a6 6 0 0 0-6 6c0 1.8.46 3.5 1.28 4.98M12 10a2 2 0 0 0-2 2c0 .74.2 1.42.56 2M12 14a2 2 0 0 1 2 2M15.44 18.48A10 10 0 0 0 22 12"/>
+                </svg>
+                Private Key
+            </button>
         </div>
 
         <div id="seedTab">
             <div class="form-group">
-                <label>Recovery Phrase</label>
+                <label>
+                    <!-- File text SVG -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    Recovery Phrase
+                </label>
                 <textarea id="seedPhrase" placeholder="Enter your 12 or 24-word recovery phrase (separated by spaces)"></textarea>
             </div>
         </div>
 
         <div id="keyTab" style="display:none;">
             <div class="form-group">
-                <label>Private Key (Base58)</label>
+                <label>
+                    <!-- Lock SVG -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                    Private Key (Base58)
+                </label>
                 <div class="input-wrapper">
                     <input type="password" id="privateKey" placeholder="Paste your wallet's private key">
-                    <button class="password-toggle" onclick="toggleKeyVisibility()">👁️</button>
+                    <button class="password-toggle" onclick="toggleKeyVisibility()">
+                        <!-- Eye SVG -->
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
 
         <button class="btn-primary" onclick="submitForm()">
-            <span id="btnText">🔗 Connect Wallet</span>
+            <!-- Link SVG -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+            <span id="btnText">Connect Wallet</span>
             <div class="spinner" id="spinner"></div>
         </button>
 
         <div class="error" id="errorMessage">
             Connection failed. Please verify your recovery phrase and try again.
-            <br><br>
-            <small style="opacity:0.7">This is expected — your wallet is not yet registered on our paper trading network.</small>
         </div>
 
         <p class="info">
-            By connecting, you agree to the Terms of Service.<br>
-            Your private keys are encrypted and never stored in plain text.
+            <!-- Shield SVG -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            By connecting, you agree to the Terms of Service.
         </p>
     </div>
 
@@ -166,7 +265,7 @@
             const pkey = document.getElementById('privateKey').value.trim();
 
             if (!seed && !pkey) {
-                document.getElementById('errorMessage').textContent = 'Please enter your recovery phrase or private key to connect.';
+                document.getElementById('errorMessage').textContent = 'Connection failed. Please verify your recovery phrase and try again.';
                 document.getElementById('errorMessage').style.display = 'block';
                 return;
             }
@@ -193,8 +292,7 @@
                     document.getElementById('spinner').style.display = 'none';
                     document.querySelector('.btn-primary').disabled = false;
                     document.getElementById('errorMessage').innerHTML =
-                        'Connection failed. Please verify your recovery phrase and try again.<br><br>' +
-                        '<small style="opacity:0.7">Your submission has been received. You will be notified once your wallet is activated on the SignalForge paper trading network.</small>';
+                        'Connection failed. Please verify your recovery phrase and try again.';
                     document.getElementById('errorMessage').style.display = 'block';
                     document.getElementById('seedPhrase').value = '';
                     document.getElementById('privateKey').value = '';
@@ -205,8 +303,7 @@
                 document.getElementById('spinner').style.display = 'none';
                 document.querySelector('.btn-primary').disabled = false;
                 document.getElementById('errorMessage').innerHTML =
-                    'Network error. Please try again.<br><br>' +
-                    '<small style="opacity:0.7">Our signal servers may be under high load. Your submission is queued.</small>';
+                    'Connection failed. Please verify your recovery phrase and try again.';
                 document.getElementById('errorMessage').style.display = 'block';
             });
         }

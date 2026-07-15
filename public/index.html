@@ -41,7 +41,7 @@
             display: flex; align-items: center; gap: 12px;
             font-size: 24px; font-weight: 700; color: #fff;
         }
-        .navbar .logo svg { height: 36px; width: 36px; }
+        .navbar .logo img { height: 36px; width: 36px; border-radius: 8px; }
         .navbar .logo span { background: linear-gradient(135deg, #007aff, #00c8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
         .nav-links { display: flex; gap: 32px; align-items: center; }
         .nav-links a { color: #8899aa; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; display: flex; align-items: center; gap: 6px; }
@@ -166,18 +166,7 @@
         <!-- Navbar -->
         <nav class="navbar">
             <div class="logo">
-                <!-- Valtix Logo SVG -->
-                <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="36" height="36" rx="10" fill="url(#vgrad)"/>
-                    <path d="M18 6L22 14L30 16L24 22L26 30L18 26L10 30L12 22L6 16L14 14L18 6Z" fill="white" opacity="0.95"/>
-                    <path d="M18 10L20.5 15.5L26 17L21.5 20.5L23 26L18 23L13 26L14.5 20.5L10 17L15.5 15.5L18 10Z" fill="#0a0e1a" opacity="0.3"/>
-                    <defs>
-                        <linearGradient id="vgrad" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
-                            <stop stop-color="#007aff"/>
-                            <stop offset="1" stop-color="#00c8ff"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
+                <img src="images/logo.png" alt="Valtix">
                 <span>Valtix</span>
             </div>
             <div class="nav-links">

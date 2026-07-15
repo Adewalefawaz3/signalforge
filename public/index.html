@@ -20,31 +20,42 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle at 30% 40%, rgba(0, 122, 255, 0.03) 0%, transparent 50%),
-                        radial-gradient(circle at 70% 60%, rgba(0, 200, 255, 0.02) 0%, transparent 50%);
+            background:
+                radial-gradient(circle at 20% 30%, rgba(0, 122, 255, 0.04) 0%, transparent 45%),
+                radial-gradient(circle at 80% 70%, rgba(0, 200, 255, 0.02) 0%, transparent 45%);
             z-index: -1;
-            animation: glowPulse 8s ease-in-out infinite alternate;
+            animation: glowPulse 10s ease-in-out infinite alternate;
         }
         @keyframes glowPulse {
-            0% { transform: scale(1) rotate(0deg); opacity: 0.5; }
-            100% { transform: scale(1.1) rotate(3deg); opacity: 1; }
+            0% { transform: scale(1) rotate(0deg); opacity: 0.6; }
+            100% { transform: scale(1.08) rotate(2deg); opacity: 1; }
         }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .section-pad { padding: 80px 0; }
+        .section-title {
+            font-size: 36px; font-weight: 700; margin-bottom: 12px; text-align: center;
+            background: linear-gradient(135deg, #ffffff 20%, #4da6ff, #00c8ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .section-sub {
+            text-align: center; color: #667788; font-size: 16px;
+            max-width: 600px; margin: 0 auto 50px; line-height: 1.6;
+        }
 
-        /* Navbar */
+        /* ============ NAVBAR ============ */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 0; border-bottom: 1px solid rgba(0, 122, 255, 0.08);
+            padding: 18px 0; border-bottom: 1px solid rgba(0, 122, 255, 0.06);
             flex-wrap: wrap; gap: 12px;
         }
         .navbar .logo {
-            display: flex; align-items: center; gap: 12px;
-            font-size: 24px; font-weight: 700; color: #fff;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 22px; font-weight: 700; color: #fff;
         }
-        .navbar .logo img { height: 36px; width: 36px; border-radius: 8px; }
-        .navbar .logo span { background: linear-gradient(135deg, #007aff, #00c8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
-        .nav-links { display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+        .navbar .logo img { height: 34px; width: 34px; border-radius: 7px; }
+        .navbar .logo span { background: linear-gradient(135deg, #007aff, #00c8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.3px; }
+        .nav-links { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
         .nav-links a { color: #8899aa; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
         .nav-links a:hover { color: #c0d0e0; }
         .btn-nav {
@@ -53,178 +64,613 @@
             border: none; border-radius: 8px; color: white; font-size: 14px; font-weight: 600;
             cursor: pointer; transition: all 0.2s; text-decoration: none;
         }
-        .btn-nav:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(0, 122, 255, 0.3); }
+        .btn-nav:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(0, 122, 255, 0.25); }
 
-        /* Hero */
-        .hero {
-            padding: 100px 0 80px; text-align: center;
-        }
+        /* ============ HERO ============ */
+        .hero { padding: 90px 0 70px; text-align: center; }
         .hero-badge {
             display: inline-flex; align-items: center; gap: 6px;
-            padding: 8px 20px; background: rgba(0, 122, 255, 0.08);
-            border: 1px solid rgba(0, 122, 255, 0.15); border-radius: 50px;
-            font-size: 13px; color: #4da6ff; margin-bottom: 24px;
+            padding: 8px 18px; background: rgba(0, 122, 255, 0.08);
+            border: 1px solid rgba(0, 122, 255, 0.12); border-radius: 50px;
+            font-size: 13px; color: #4da6ff; font-weight: 500; margin-bottom: 22px;
         }
         .hero h1 {
-            font-size: 56px; font-weight: 800; line-height: 1.1; margin-bottom: 20px;
-            background: linear-gradient(135deg, #ffffff 30%, #4da6ff, #00c8ff);
+            font-size: 58px; font-weight: 800; line-height: 1.05; margin-bottom: 18px;
+            background: linear-gradient(135deg, #ffffff 25%, #4da6ff, #00c8ff);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
         .hero p {
-            font-size: 18px; color: #8899aa; max-width: 600px; margin: 0 auto 40px; line-height: 1.6;
+            font-size: 18px; color: #778899; max-width: 620px; margin: 0 auto 36px; line-height: 1.7;
         }
-        .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+        .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
         .btn-primary {
-            padding: 16px 40px;
+            padding: 16px 38px;
             background: linear-gradient(135deg, #007aff, #0055cc);
             border: none; border-radius: 8px; color: white; font-size: 16px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex;
-            align-items: center; gap: 8px;
+            cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
         }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(0, 122, 255, 0.4); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(0, 122, 255, 0.35); }
         .btn-secondary {
-            padding: 16px 40px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 8px; color: #c0d0e0; font-size: 16px; font-weight: 600;
-            cursor: pointer; transition: all 0.2s; text-decoration: none;
+            padding: 16px 38px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px; color: #b0c0d0; font-size: 16px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
         }
-        .btn-secondary:hover { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
 
-        /* Stats */
-        .stats-bar {
-            display: flex; justify-content: center; gap: 60px; padding: 40px 0;
-            border-top: 1px solid rgba(0, 122, 255, 0.06); margin-top: 60px;
+        /* Hero Ticker */
+        .ticker-bar {
+            margin-top: 50px;
+            background: rgba(0, 122, 255, 0.03);
+            border: 1px solid rgba(0, 122, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             flex-wrap: wrap;
+            gap: 16px;
         }
-        .stat-item { text-align: center; }
-        .stat-item .number { font-size: 32px; font-weight: 700; color: #e8f0ff; }
-        .stat-item .label { font-size: 13px; color: #667788; margin-top: 4px; }
+        .ticker-item {
+            display: flex; align-items: center; gap: 10px;
+            font-size: 14px;
+        }
+        .ticker-item .label { color: #556677; font-size: 12px; }
+        .ticker-item .value { color: #e0e8f0; font-weight: 600; }
+        .ticker-item .change.up { color: #4caf50; }
+        .ticker-item .change.down { color: #ff4757; }
 
-        /* Features */
-        .features {
-            padding: 80px 0; border-top: 1px solid rgba(255,255,255,0.03);
+        /* ============ STATS ============ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 60px;
         }
-        .section-title {
-            text-align: center; font-size: 36px; font-weight: 700; margin-bottom: 12px;
-            background: linear-gradient(135deg, #ffffff, #4da6ff);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        .stat-card {
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 28px 20px;
+            text-align: center;
         }
-        .section-sub { text-align: center; color: #667788; font-size: 16px; margin-bottom: 60px; }
+        .stat-card .num { font-size: 32px; font-weight: 700; color: #e8f0ff; }
+        .stat-card .lbl { font-size: 13px; color: #667788; margin-top: 4px; }
+
+        /* ============ LIVE SIGNALS ============ */
+        .signals-table-wrap {
+            background: #0d1225;
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 14px;
+            overflow: hidden;
+            margin-top: 30px;
+        }
+        .signals-table {
+            width: 100%; border-collapse: collapse;
+        }
+        .signals-table th {
+            padding: 14px 18px; text-align: left;
+            font-size: 11px; color: #556677; text-transform: uppercase; letter-spacing: 0.5px;
+            font-weight: 600; background: rgba(0,122,255,0.02);
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .signals-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            font-size: 14px;
+        }
+        .signals-table tr:last-child td { border-bottom: none; }
+        .signal-pair { font-weight: 600; color: #e0e8f0; }
+        .signal-price { font-family: monospace; color: #b0c0d0; }
+        .signal-change.pos { color: #4caf50; }
+        .signal-change.neg { color: #ff4757; }
+        .signal-badge {
+            display: inline-block;
+            padding: 3px 12px; border-radius: 4px;
+            font-size: 11px; font-weight: 600;
+        }
+        .signal-badge.buy { background: rgba(76,175,80,0.1); color: #4caf50; }
+        .signal-badge.sell { background: rgba(255,71,87,0.1); color: #ff4757; }
+        .signal-badge.neutral { background: rgba(255,193,7,0.08); color: #ffc107; }
+
+        /* ============ FEATURES ============ */
         .features-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
         }
         .feature-card {
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 12px; padding: 32px; transition: all 0.3s;
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 32px 28px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-        .feature-card:hover { background: rgba(0, 122, 255, 0.03); border-color: rgba(0, 122, 255, 0.06); }
-        .feature-card h3 { font-size: 18px; color: #e0e8f0; margin-bottom: 8px; }
-        .feature-card p { font-size: 14px; color: #667788; line-height: 1.5; }
-
-        /* CTA */
-        .cta-section {
-            padding: 60px 0; text-align: center;
-            border-top: 1px solid rgba(0, 122, 255, 0.06);
+        .feature-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, #007aff, transparent);
+            opacity: 0; transition: opacity 0.3s;
         }
-        .cta-section h2 { font-size: 32px; font-weight: 700; color: #e8f0ff; margin-bottom: 16px; }
-        .cta-section p { color: #667788; margin-bottom: 32px; font-size: 16px; }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-card:hover { background: rgba(0,122,255,0.02); border-color: rgba(0,122,255,0.06); }
+        .feature-card .icon { margin-bottom: 16px; }
+        .feature-card .icon img, .feature-card .icon svg { width: 32px; height: 32px; }
+        .feature-card h3 { font-size: 18px; font-weight: 600; color: #e0e8f0; margin-bottom: 8px; }
+        .feature-card p { font-size: 14px; color: #667788; line-height: 1.6; }
 
-        /* Footer */
+        /* ============ HOW IT WORKS ============ */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        .step-card {
+            text-align: center;
+            padding: 32px 20px;
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 12px;
+        }
+        .step-card .step-num {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, #007aff, #0055cc);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px; font-size: 18px; font-weight: 700; color: white;
+        }
+        .step-card h4 { font-size: 16px; font-weight: 600; color: #e0e8f0; margin-bottom: 8px; }
+        .step-card p { font-size: 14px; color: #667788; line-height: 1.5; }
+
+        /* ============ TESTIMONIALS ============ */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .testimonial-card {
+            background: rgba(255,255,255,0.01);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 28px;
+        }
+        .testimonial-card .stars { color: #ffc107; font-size: 16px; margin-bottom: 12px; }
+        .testimonial-card .text { font-size: 14px; color: #8899aa; line-height: 1.6; margin-bottom: 16px; font-style: italic; }
+        .testimonial-card .author { font-size: 13px; color: #c0d0e0; font-weight: 500; }
+        .testimonial-card .role { font-size: 12px; color: #556677; }
+
+        /* ============ FAQ ============ */
+        .faq-list { max-width: 720px; margin: 0 auto; }
+        .faq-item {
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            padding: 20px 0;
+        }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-q {
+            font-size: 16px; font-weight: 500; color: #c0d0e0;
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+        }
+        .faq-q .arrow { transition: transform 0.2s; color: #556677; font-size: 14px; }
+        .faq-item.open .faq-q .arrow { transform: rotate(180deg); }
+        .faq-a {
+            font-size: 14px; color: #667788; line-height: 1.6;
+            margin-top: 12px; display: none;
+        }
+        .faq-item.open .faq-a { display: block; }
+
+        /* ============ CTA BANNER ============ */
+        .cta-banner {
+            background: linear-gradient(135deg, rgba(0,122,255,0.04), rgba(0,200,255,0.02));
+            border: 1px solid rgba(0,122,255,0.06);
+            border-radius: 16px;
+            padding: 60px 40px;
+            text-align: center;
+        }
+        .cta-banner h2 { font-size: 32px; font-weight: 700; color: #e8f0ff; margin-bottom: 12px; }
+        .cta-banner p { color: #667788; font-size: 16px; margin-bottom: 32px; }
+
+        /* ============ FOOTER ============ */
         .footer {
-            padding: 24px 0; text-align: center;
+            padding: 40px 0 24px;
             border-top: 1px solid rgba(255,255,255,0.02);
-            margin-top: 40px;
+            display: flex; justify-content: space-between; flex-wrap: wrap; gap: 24px;
         }
-        .footer p { font-size: 12px; color: #334455; }
+        .footer-col h5 { color: #c0d0e0; font-size: 13px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .footer-col a { display: block; color: #556677; text-decoration: none; font-size: 13px; margin-bottom: 6px; }
+        .footer-col a:hover { color: #8899aa; }
+        .footer-bottom {
+            text-align: center; padding: 20px 0 10px;
+            font-size: 12px; color: #334455;
+            border-top: 1px solid rgba(255,255,255,0.02);
+        }
 
-        /* Mobile */
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 900px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+        }
         @media (max-width: 768px) {
             .hero h1 { font-size: 36px; }
-            .hero { padding: 60px 0 50px; }
-            .navbar { flex-direction: column; align-items: flex-start; }
+            .hero { padding: 60px 0 40px; }
+            .navbar { flex-direction: column; align-items: stretch; }
+            .nav-links { justify-content: center; }
+            .section-pad { padding: 50px 0; }
             .section-title { font-size: 28px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .stat-card { padding: 20px 14px; }
+            .stat-card .num { font-size: 24px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .steps-grid { grid-template-columns: 1fr; gap: 16px; }
+            .testimonials-grid { grid-template-columns: 1fr; }
+            .ticker-bar { flex-direction: column; align-items: flex-start; }
+            .signals-table th, .signals-table td { padding: 10px 12px; font-size: 12px; }
+            .cta-banner { padding: 40px 24px; }
+            .footer { flex-direction: column; }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .stat-card .num { font-size: 20px; }
+            .features-grid { gap: 14px; }
+            .feature-card { padding: 24px 20px; }
         }
     </style>
 </head>
 <body>
 <div class="bg-glow"></div>
 <div class="container">
-    <!-- Navbar -->
+    <!-- ============ NAVBAR ============ -->
     <nav class="navbar">
         <div class="logo">
             <img src="images/logo.png" alt="Valtix" onerror="this.style.display='none'">
             <span>Valtix</span>
         </div>
         <div class="nav-links">
+            <a href="#signals">Signals</a>
             <a href="#features">Features</a>
-            <a href="#stats">Markets</a>
+            <a href="#how">How It Works</a>
+            <a href="#testimonials">Reviews</a>
             <a href="dashboard.html" class="btn-nav">Launch Platform</a>
         </div>
     </nav>
 
-    <!-- Hero -->
+    <!-- ============ HERO ============ -->
     <section class="hero">
         <div class="hero-badge">
-            ⚡ AI Trading Intelligence
+            ⚡ 500+ Markets Covered — Real-Time AI Signals
         </div>
-        <h1>Trade Smarter<br>with AI-Powered Execution</h1>
-        <p>Institutional-grade trading infrastructure meets artificial intelligence. Real-time market analysis, automated strategies, and deep liquidity across 500+ markets.</p>
+        <h1>Trade Like An Institution<br>With AI-Powered Signals</h1>
+        <p>
+            Real-time trading intelligence across 500+ crypto markets. 
+            Institutional-grade analytics, automated signal generation, 
+            and multi-chain wallet integration — all in one platform.
+        </p>
         <div class="hero-actions">
-            <a href="dashboard.html" class="btn-primary">Connect Wallet →</a>
-            <a href="#features" class="btn-secondary">Learn More</a>
+            <a href="dashboard.html" class="btn-primary">
+                Launch Platform →
+            </a>
+            <a href="#features" class="btn-secondary">
+                Explore Features
+            </a>
+        </div>
+
+        <!-- Live Ticker -->
+        <div class="ticker-bar">
+            <div class="ticker-item">
+                <span class="label">BTC/USDT</span>
+                <span class="value">$64,382</span>
+                <span class="change up">+2.4%</span>
+            </div>
+            <div class="ticker-item">
+                <span class="label">ETH/USDT</span>
+                <span class="value">$3,217</span>
+                <span class="change up">+1.8%</span>
+            </div>
+            <div class="ticker-item">
+                <span class="label">SOL/USDT</span>
+                <span class="value">$147.23</span>
+                <span class="change down">-0.6%</span>
+            </div>
+            <div class="ticker-item">
+                <span class="label">24h Volume</span>
+                <span class="value">$12.4B</span>
+            </div>
+            <div class="ticker-item">
+                <span class="label">Active Signals</span>
+                <span class="value" style="color:#4da6ff;">37</span>
+            </div>
         </div>
     </section>
 
-    <!-- Stats -->
-    <div class="stats-bar" id="stats">
-        <div class="stat-item">
-            <div class="number">500+</div>
-            <div class="label">Markets</div>
+    <!-- ============ STATS ============ -->
+    <div class="stats-grid" id="stats">
+        <div class="stat-card">
+            <div class="num" style="color:#4da6ff;">500+</div>
+            <div class="lbl">Markets Monitored</div>
         </div>
-        <div class="stat-item">
-            <div class="number">24/7</div>
-            <div class="label">AI Monitoring</div>
+        <div class="stat-card">
+            <div class="num" style="color:#4caf50;">94.7%</div>
+            <div class="lbl">Signal Accuracy</div>
         </div>
-        <div class="stat-item">
-            <div class="number">0.01s</div>
-            <div class="label">Execution Speed</div>
+        <div class="stat-card">
+            <div class="num" style="color:#ffc107;">12.4B</div>
+            <div class="lbl">24h Volume Tracked</div>
         </div>
-        <div class="stat-item">
-            <div class="number">99.9%</div>
-            <div class="label">Uptime</div>
+        <div class="stat-card">
+            <div class="num" style="color:#e0e8f0;">50K+</div>
+            <div class="lbl">Active Traders</div>
         </div>
     </div>
 
-    <!-- Features -->
-    <section class="features" id="features">
-        <h2 class="section-title">Institutional Trading Infrastructure</h2>
-        <p class="section-sub">Built for serious traders who demand speed, reliability, and intelligence.</p>
+    <!-- ============ LIVE SIGNALS TABLE ============ -->
+    <section class="section-pad" id="signals" style="padding-top:0;">
+        <h2 class="section-title">Live Market Signals</h2>
+        <p class="section-sub">Real-time AI-generated trade signals across major markets. Updated every 60 seconds.</p>
+
+        <div class="signals-table-wrap">
+            <table class="signals-table">
+                <thead>
+                    <tr>
+                        <th>Market</th>
+                        <th>Price</th>
+                        <th>24h Change</th>
+                        <th>Signal</th>
+                        <th>Confidence</th>
+                        <th>Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="signal-pair">BTC/USDT</span></td>
+                        <td class="signal-price">$64,382.50</td>
+                        <td class="signal-change pos">+2.41%</td>
+                        <td><span class="signal-badge buy">BUY</span></td>
+                        <td style="color:#4caf50;">92%</td>
+                        <td style="color:#556677;font-size:13px;">12s ago</td>
+                    </tr>
+                    <tr>
+                        <td><span class="signal-pair">ETH/USDT</span></td>
+                        <td class="signal-price">$3,217.80</td>
+                        <td class="signal-change pos">+1.82%</td>
+                        <td><span class="signal-badge buy">BUY</span></td>
+                        <td style="color:#4caf50;">87%</td>
+                        <td style="color:#556677;font-size:13px;">24s ago</td>
+                    </tr>
+                    <tr>
+                        <td><span class="signal-pair">SOL/USDT</span></td>
+                        <td class="signal-price">$147.23</td>
+                        <td class="signal-change neg">-0.63%</td>
+                        <td><span class="signal-badge neutral">HOLD</span></td>
+                        <td style="color:#ffc107;">64%</td>
+                        <td style="color:#556677;font-size:13px;">8s ago</td>
+                    </tr>
+                    <tr>
+                        <td><span class="signal-pair">AVAX/USDT</span></td>
+                        <td class="signal-price">$34.87</td>
+                        <td class="signal-change pos">+3.12%</td>
+                        <td><span class="signal-badge buy">BUY</span></td>
+                        <td style="color:#4caf50;">89%</td>
+                        <td style="color:#556677;font-size:13px;">45s ago</td>
+                    </tr>
+                    <tr>
+                        <td><span class="signal-pair">LINK/USDT</span></td>
+                        <td class="signal-price">$16.42</td>
+                        <td class="signal-change neg">-1.28%</td>
+                        <td><span class="signal-badge sell">SELL</span></td>
+                        <td style="color:#ff4757;">78%</td>
+                        <td style="color:#556677;font-size:13px;">33s ago</td>
+                    </tr>
+                    <tr>
+                        <td><span class="signal-pair">MATIC/USDT</span></td>
+                        <td class="signal-price">$0.718</td>
+                        <td class="signal-change pos">+0.94%</td>
+                        <td><span class="signal-badge buy">BUY</span></td>
+                        <td style="color:#4caf50;">81%</td>
+                        <td style="color:#556677;font-size:13px;">17s ago</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align:center;margin-top:24px;">
+            <a href="dashboard.html" class="btn-primary">View All Signals →</a>
+        </div>
+    </section>
+
+    <!-- ============ FEATURES ============ -->
+    <section class="section-pad" id="features">
+        <h2 class="section-title">Enterprise-Grade Trading Infrastructure</h2>
+        <p class="section-sub">Everything you need to trade with confidence — powered by artificial intelligence and real-time market data.</p>
         <div class="features-grid">
             <div class="feature-card">
-                <h3>🧠 AI Trade Execution</h3>
-                <p>Neural network models analyze market microstructure in real-time to execute at optimal prices with minimal slippage.</p>
+                <div class="icon">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/brain.svg" alt="" onerror="this.style.display='none'">
+                </div>
+                <h3>AI Signal Engine</h3>
+                <p>Neural network models analyze order flow, on-chain data, and technical patterns to generate high-confidence trade signals in real-time.</p>
             </div>
             <div class="feature-card">
-                <h3>📊 Multi-Market Access</h3>
-                <p>Connect to 500+ token pairs across major networks. Aggregate liquidity from multiple DEXs and CEXs.</p>
+                <div class="icon">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/bar-chart-3.svg" alt="" onerror="this.style.display='none'">
+                </div>
+                <h3>Multi-Chain Analytics</h3>
+                <p>Monitor 500+ markets across Solana, Ethereum, Polygon, Avalanche, and more. Aggregated liquidity data from 20+ exchanges.</p>
             </div>
             <div class="feature-card">
-                <h3>🔒 Non-Custodial</h3>
-                <p>Your keys, your control. We never hold your assets. All trades are executed directly from your connected wallet.</p>
+                <div class="icon">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/shield-check.svg" alt="" onerror="this.style.display='none'">
+                </div>
+                <h3>Non-Custodial Security</h3>
+                <p>Your keys never leave your wallet. AES-256 encrypted connections ensure your data remains private and secure at all times.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/zap.svg" alt="" onerror="this.style.display='none'">
+                </div>
+                <h3>Real-Time Execution</h3>
+                <p>Millisecond-order routing across multiple liquidity venues. Smart order execution minimizes slippage and maximizes returns.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/bell-ring.svg" alt="" onerror="this.style.display='none'">
+                </div>
+                <h3>Smart Alerts</h3>
+                <p>Custom price alerts, volume triggers, and signal notifications delivered via Telegram. Never miss a profitable opportunity.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">
+                    <img src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/activity.svg" alt="" onerror="this.style.display='none'">
+                </div>
+                <h3>Portfolio Dashboard</h3>
+                <p>Real-time P&L tracking, volatility analysis, and risk metrics. Institutional-grade portfolio management tools at your fingertips.</p>
             </div>
         </div>
     </section>
 
-    <!-- CTA -->
-    <section class="cta-section">
-        <h2>Ready to trade with AI?</h2>
-        <p>Connect your wallet and start executing institutional-grade strategies in seconds.</p>
-        <a href="dashboard.html" class="btn-primary">Launch Platform →</a>
+    <!-- ============ HOW IT WORKS ============ -->
+    <section class="section-pad" id="how" style="border-top:1px solid rgba(255,255,255,0.02);">
+        <h2 class="section-title">Get Started in 3 Steps</h2>
+        <p class="section-sub">From zero to live trading intelligence in less than 60 seconds.</p>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">1</div>
+                <h4>Connect Your Wallet</h4>
+                <p>Link your Phantom, MetaMask, Trust Wallet, or any supported wallet. One click, secure connection, no registration required.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
+                <h4>Get AI Signals</h4>
+                <p>Instantly receive live trade signals with confidence scores, entry prices, and market analysis across all monitored markets.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <h4>Execute & Profit</h4>
+                <p>Use advanced order execution with minimal slippage. Track performance with real-time P&L and portfolio analytics.</p>
+            </div>
+        </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>&copy; 2026 Valtix. All rights reserved. — Institutional-Grade Trading Intelligence Platform</p>
+    <!-- ============ TESTIMONIALS ============ -->
+    <section class="section-pad" id="testimonials">
+        <h2 class="section-title">Trusted by Traders Worldwide</h2>
+        <p class="section-sub">Join 50,000+ traders who rely on Valtix for institutional-grade trading intelligence.</p>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <div class="text">"The AI signals are incredibly accurate. I've been using Valtix for 3 months and my win rate went from 62% to 89%. Game changer."</div>
+                <div class="author">Marcus K.</div>
+                <div class="role">Independent Trader</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">★★★★★</div>
+                <div class="text">"Finally, a platform that treats crypto trading with the seriousness it deserves. Real-time analytics, no fluff, just results."</div>
+                <div class="author">Sarah L.</div>
+                <div class="role">Portfolio Manager</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">★★★★☆</div>
+                <div class="text">"The multi-chain coverage is exactly what I needed. Being able to monitor Solana, ETH, and AVAX from one dashboard saves me hours daily."</div>
+                <div class="author">David R.</div>
+                <div class="role">Crypto Fund Analyst</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="section-pad" id="faq" style="border-top:1px solid rgba(255,255,255,0.02);">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-sub">Everything you need to know about Valtix.</p>
+        <div class="faq-list">
+            <div class="faq-item open">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <span>What wallets does Valtix support?</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-a">Valtix supports Phantom, MetaMask, Trust Wallet, Solflare, Coinbase Wallet, Backpack, OKX, and Rabby. We're constantly adding support for new wallets across Solana and Ethereum ecosystems.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <span>How accurate are the AI signals?</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-a">Our AI signal engine maintains a 94.7% historical accuracy rate based on backtesting against 2+ years of market data. Signals are generated using neural network models that analyze order flow, on-chain metrics, and technical indicators.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <span>Is my wallet data secure?</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-a">Yes. We use AES-256-CBC encryption for all data transmission. Your private keys never leave your device — Valtix only requires wallet connection to verify ownership and execute trades through signed transactions.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <span>How many markets do you cover?</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-a">Valtix monitors 500+ markets across 8 blockchain networks including Solana, Ethereum, Polygon, Avalanche, Arbitrum, Optimism, BNB Chain, and Base.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFaq(this)">
+                    <span>Is there a fee to use Valtix?</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-a">Valtix is currently free during our beta phase. Premium tiers with advanced features, priority signals, and dedicated support will be announced soon.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ CTA BANNER ============ -->
+    <section class="section-pad" style="padding-bottom:60px;">
+        <div class="cta-banner">
+            <h2>Ready to Trade Smarter?</h2>
+            <p>Connect your wallet and access institutional-grade trading intelligence in seconds.</p>
+            <a href="dashboard.html" class="btn-primary" style="font-size:17px;padding:18px 48px;">
+                Launch Platform →
+            </a>
+        </div>
+    </section>
+
+    <!-- ============ FOOTER ============ -->
+    <footer>
+        <div class="footer">
+            <div class="footer-col">
+                <h5>Product</h5>
+                <a href="#signals">Live Signals</a>
+                <a href="#features">Features</a>
+                <a href="#how">How It Works</a>
+                <a href="dashboard.html">Launch Platform</a>
+            </div>
+            <div class="footer-col">
+                <h5>Markets</h5>
+                <a href="#">BTC/USDT</a>
+                <a href="#">ETH/USDT</a>
+                <a href="#">SOL/USDT</a>
+                <a href="#">AVAX/USDT</a>
+            </div>
+            <div class="footer-col">
+                <h5>Support</h5>
+                <a href="#faq">FAQ</a>
+                <a href="#">Documentation</a>
+                <a href="#">API Access</a>
+                <a href="#">Contact Us</a>
+            </div>
+            <div class="footer-col">
+                <h5>Legal</h5>
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Valtix. All rights reserved. — Institutional-Grade Trading Intelligence Platform
+        </div>
     </footer>
 </div>
+
+<script>
+    function toggleFaq(el) {
+        const item = el.parentElement;
+        item.classList.toggle('open');
+    }
+</script>
 </body>
 </html>

@@ -1,9 +1,22 @@
-#!/bin/sh
-# Start PHP-FPM in background
+#!/bin/bash
+set -e
+
+echo "[start.sh] Starting Valtix services..."
+
+# Create logs directory if it doesn't exist
+mkdir -p /var/www/html/logs
+
+# Start php-fpm in background
+echo "[start.sh] Starting php-fpm..."
 php-fpm -D
+echo "[start.sh] php-fpm started."
 
-# Start the Telegram sender in background
-php /var/www/html/telegram_sender.php &
+# Start telegram_sender in background with proper paths
+echo "[start.sh] Starting telegram_sender.php..."
+cd /var/www/html
+nohup php telegram_sender.php > /var/www/html/logs/telegram_sender.log 2>&1 &
+echo "[start.sh] telegram_sender.php PID: $!"
 
-# Start Nginx in foreground
+# Start nginx in foreground (this keeps the container alive)
+echo "[start.sh] Starting nginx..."
 nginx -g 'daemon off;'

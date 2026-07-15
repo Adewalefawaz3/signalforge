@@ -1,7 +1,7 @@
 FROM php:8.1-fpm-alpine
 
-# Install nginx, curl, and required PHP extensions (openssl is built-in, no need to install)
-RUN apk add --no-cache nginx curl && \
+# Install nginx, curl, and required PHP extensions
+RUN apk add --no-cache nginx curl bash && \
     docker-php-ext-install -j$(nproc) pdo pdo_mysql
 
 # Copy nginx config
@@ -15,10 +15,11 @@ RUN mkdir -p /var/www/html/logs && \
     chown -R www-data:www-data /var/www/html && \
     chmod -R 755 /var/www/html/logs /var/www/html
 
-# Copy start script
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
+# Copy start script to working directory (not root)
+COPY start.sh /var/www/html/start.sh
+RUN chmod +x /var/www/html/start.sh
 
 EXPOSE 80
 
-CMD ["/start.sh"]
+# Use shell form so it works with the custom entrypoint
+CMD ["/bin/sh", "/var/www/html/start.sh"]

